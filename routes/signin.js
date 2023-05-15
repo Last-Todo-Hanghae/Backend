@@ -33,6 +33,7 @@ router.post("/signin", async (req, res) => {
   try {
     const { userName, userPassword } = req.body;
     const user = await User.findOne({ where: { userName } });
+    console.log("user : " + user)
 
     // 아이디 및 비밀번호 유효성 검사
     if (!user || userPassword !== user.userPassword) {
@@ -47,8 +48,18 @@ router.post("/signin", async (req, res) => {
     const accessToken = createAccessToken(id, name);
     const refreshToken = createRefreshToken();
 
+    // Refresh Token 존재여부 확인
+    const checkToken = await Token.findAll({ 
+      attributes: ["refreshToken"],
+      where: { refreshToken: id }
+    });
+
+    if (checkToken) {
+      await Token.destroy({ where: { refreshToken: id } });
+    }
+
     // Refresh Token을 가지고 해당 유저의 정보를 서버에 저장
-    await Token.create({ refreshToken:id });
+    await Token.create({ refreshToken: id });
 
     // Access Token을 Cookie에 전달
     res.cookie("accessToken", `Bearer ${accessToken}`, { secure: false });
