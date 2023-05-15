@@ -10,7 +10,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // User -> UserInfo
+      this.belongsTo(models.User, {
+        targetKey: 'userId',
+        foreignKey: 'userId'
+      });
     }
   }
   UserInfo.init({
@@ -32,13 +36,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     createdAt: {
       allowNull: false,
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.fn("now")
+      type: DataTypes.DATE
     },
     updatedAt: {
       allowNull: false,
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.fn("now")
+      type: DataTypes.DATE
     }
   }, {
     sequelize,
