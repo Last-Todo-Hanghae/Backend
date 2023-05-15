@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 // 모델 가져오기
-const { User } = require("../models");
+const { User, UserInfo } = require("../models");
 
 // 회원가입 API
 router.post("/signup", async (req, res) => {
@@ -45,6 +45,10 @@ router.post("/signup", async (req, res) => {
 
     // 유저 테이블에 회원정보 저장
     const user = await User.create({ userName, userPassword });
+
+    // 유저 정보 테이블에 회원정보 저장
+    const userinfo = await UserInfo.create({ userId: user.userId });
+
     return res.status(201).json({});
   } catch (err) {
     console.log(err);

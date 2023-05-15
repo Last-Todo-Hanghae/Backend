@@ -45,7 +45,7 @@ MYSQL_PASSWORD= (비번)
 MYSQL_DATABASE= (사용하고자 하는 데이터베이스 이름)
 MYSQL_HOST=(database endpoint 주소)
 ```
-**config.json 파일을 통한 DB 생성**
+**config.js 파일을 통한 DB 생성**
 ```
 npx sequelize db:create
 ```

@@ -5,12 +5,12 @@ const router = express.Router();
 const { Op } = require("sequelize");
 
 // 모델 가져오기
-const { Todo } = require("../models");
+const { Todo, User, UserInfo } = require("../models");
 
 // 인증을 위한 미들웨어 가져오기
 const authMiddleware = require("../middlewares/auth-middleware");
 
-// todo 작성 API
+// mytodo 작성 API
 router.post("/todo", authMiddleware, async (req, res) => {
   try {
     const { userId } = res.locals.user;
@@ -33,21 +33,35 @@ router.post("/todo", authMiddleware, async (req, res) => {
   }
 });
 
-// // 전체 게시글 목록 조회 API
-// router.get("/todo", async (req, res) => {
-//   try {
-//     const posts = await Posts.findAll({
-//       attributes: ["postId", "name", "nickname", "createdAt", "updatedAt"],
-//       order: [['createdAt', 'DESC']],
-//     });
-//     return res.status(200).json({ data: posts });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).send({
-//       errorMessage: "서버에서 에러가 발생하였습니다. 관리자에게 문의 부탁드립니다."
-//     })
-//   }
-// });
+// mytodo 전체 조회 API
+router.get("/todo", async (req, res) => {
+  try {
+    const todoAll = await Todo.findAll({
+      attributes: ["todoId", "todoContent", "todoStatus", "todoPriority", "updatedAt"],
+      include: [
+        {
+          model: User,
+          required: true,
+          attributes: ['userName'],
+          include: [
+            {
+              model: UserInfo,
+              required: true,
+              attributes: ['userImage']
+            }
+          ]
+        }
+      ],
+      order: [['updatedAt', 'DESC']]
+    });
+    return res.status(200).json({ todoAll });
+  } catch (err) {
+    console.log(err);
+    res.status(403).send({
+      errorMessage: "서버에서 에러가 발생하였습니다. 관리자에게 문의 부탁드립니다."
+    })
+  }
+});
 
 // // 게시글 조회 API
 // router.get("/posts/:postId", authMiddleware, async (req, res) => {
