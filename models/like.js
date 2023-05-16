@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Like extends Model {
     /**
@@ -12,42 +10,51 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // User -> Like
       this.belongsTo(models.User, {
-        targetKey: 'userId',
-        foreignKey: 'sourceUserId'
+        targetKey: "userId",
+        foreignKey: "sourceUserId",
       });
 
       this.belongsTo(models.User, {
-        targetKey: 'userName',
-        foreignKey: 'targetUserId'
+        targetKey: "userName",
+        foreignKey: "targetUserId",
       });
     }
   }
-  Like.init({
-    likeId: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER
+  Like.init(
+    {
+      likeId: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      sourceUserId: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.BIGINT,
+      },
+      targetUserId: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.BIGINT,
+      },
+      isLike: {
+        allowNull: false,
+        type: DataTypes.BOOLEAN,
+      },
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
     },
-    sourceUserId: {
-      allowNull: false,
-      type: DataTypes.BIGINT
-    },
-    targetUserId: {
-      allowNull: false,
-      type: DataTypes.BIGINT
-    },
-    createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE
-    },
-    updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE
+    {
+      sequelize,
+      modelName: "Like",
     }
-  }, {
-    sequelize,
-    modelName: 'Like',
-  });
+  );
   return Like;
 };

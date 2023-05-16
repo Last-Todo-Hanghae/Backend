@@ -14,17 +14,15 @@ const secretKey = env.JWT_SECRET;
 
 // Access Token 생성 함수
 function createAccessToken(id, name) {
-  const accessToken = jwt.sign(
-    { userId: id, userName: name }, secretKey, { expiresIn: "1h" }
-  ); 
+  const accessToken = jwt.sign({ userId: id, userName: name }, secretKey, {
+    expiresIn: "1h",
+  });
   return accessToken;
 }
 
 // Refresh Token 생성 함수
 function createRefreshToken() {
-  const refreshToken = jwt.sign(
-    {}, secretKey, { expiresIn: "7d" }
-  );
+  const refreshToken = jwt.sign({}, secretKey, { expiresIn: "7d" });
   return refreshToken;
 }
 
@@ -33,7 +31,7 @@ router.post("/signin", async (req, res) => {
   try {
     const { userName, userPassword } = req.body;
     const user = await User.findOne({ where: { userName } });
-    console.log("user : " + user)
+    console.log("user : " + user);
 
     // 아이디 및 비밀번호 유효성 검사
     if (!user || userPassword !== user.userPassword) {
@@ -49,9 +47,9 @@ router.post("/signin", async (req, res) => {
     const refreshToken = createRefreshToken();
 
     // Refresh Token 존재여부 확인
-    const checkToken = await Token.findAll({ 
+    const checkToken = await Token.findAll({
       attributes: ["refreshToken"],
-      where: { refreshToken: id }
+      where: { refreshToken: id },
     });
 
     if (checkToken) {
@@ -63,7 +61,7 @@ router.post("/signin", async (req, res) => {
 
     // Access Token을 Cookie에 전달
     res.cookie("accessToken", `Bearer ${accessToken}`, { secure: false });
-		// Refresh Token을 Cookie에 전달한다.
+    // Refresh Token을 Cookie에 전달한다.
     res.cookie("refreshToken", `Bearer ${refreshToken}`, { secure: false });
 
     return res.status(200).json({ accessToken, refreshToken });

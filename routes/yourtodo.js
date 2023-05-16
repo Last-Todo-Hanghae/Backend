@@ -16,197 +16,140 @@ router.get("/yourtodo", authMiddleware, async (req, res) => {
     const UserAll = await User.findAll({
       attributes: ["userName"],
       include: [
-				{
-					model: UserInfo,
+        {
+          model: UserInfo,
           required: true,
-          attributes: ["userImage"]
-				},
+          attributes: ["userImage"],
+        },
         {
           model: Todo,
           required: true,
-          attributes: ["todoId","todoContent","todoStatus","updatedAt"],
+          attributes: ["todoId", "todoContent", "todoStatus", "updatedAt"],
           order: [
-						['todoStatus', 'ASC'],
-						['updatedAt', 'DESC']
-					],
-					limit: 3
+            ["todoStatus", "ASC"],
+            ["updatedAt", "DESC"],
+          ],
+          limit: 3,
         },
-				// {
-        //   model: Like,
-        //   required: true,
-        //   attributes: ["likeId","updatedAt"],
-        //   order: [
-				// 		['updatedAt', 'DESC']
-				// 	],
-        // }
+        {
+          model: Like,
+          required: false,
+          attributes: ["isLike"],
+        },
       ],
-			order: [
-				['updatedAt', 'DESC']
-			]
+      order: [[Like, "updatedAt", "DESC"]],
     });
     return res.status(200).json({ UserAll });
   } catch (err) {
     console.log(err);
     res.status(403).send({
-      message: "mytodo 리스트 조회에 실패했습니다."
-    })
+      message: "yourtodo 리스트 조회에 실패했습니다.",
+    });
   }
 });
 
-// // mytodo 작성 API
-// router.post("/mytodo", authMiddleware, async (req, res) => {
-//   try {
-//     const { userId } = res.locals.user;
-//     const { userName } = res.locals.user;
-//     const { todoContent, todoStatus, todoPriority } = req.body;
+router.get("/yourtodo/:userId", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;
 
-//     const myTodo = await Todo.create({ userId, todoContent, todoStatus, todoPriority });
-//     return res.status(201).json({ 
-// 			userName,
-// 			todoId: myTodo.todoId,
-// 			todoContent: myTodo.todoContent,
-// 			todoStatus: myTodo.todoStatus,
-// 			todoPriority: myTodo.todoPriority
-// 		});
-//   } catch (err) {
-//     console.log(err);
-//     res.status(403).send({
-//       message: "mytodo 리스트 추가에 실패했습니다."
-//     })
-//   }
-// });
+    // User 존재 여부 확인
+    const userCheck = await User.findOne({ where: { userId } });
 
-// // mytodo 중요도 수정 API
-// router.put("/mytodo/:todoId/priority", authMiddleware, async (req, res) => {
-//   try {
-//     const { userId } = res.locals.user;
-//     const { todoId } = req.params;
-//     const { todoPriority } = req.body;
+    if (!userCheck) {
+      return res.status(404).json({
+        message: "해당 유저를 찾을 수 없습니다.",
+      });
+    }
 
-//     // mytodo list 존재 여부 확인
-//     const mytodo = await Todo.findOne({ where: { todoId } });
+    const yourTodo = await User.findAll({
+      attributes: ["userName"],
+      where: { userId },
+      include: [
+        {
+          model: UserInfo,
+          required: true,
+          attributes: ["userImage"],
+        },
+        {
+          model: Todo,
+          required: true,
+          attributes: ["todoId", "todoContent", "todoStatus", "todoPriority"],
+          order: [
+            ["todoStatus", "ASC"],
+            ["updatedAt", "DESC"],
+          ],
+        },
+        {
+          model: Like,
+          required: false,
+          attributes: ["isLike"],
+        },
+      ],
+    });
+    return res.status(200).json({ yourTodo });
+  } catch (err) {
+    console.log(err);
+    res.status(403).send({
+      message: "mytodo 리스트 조회에 실패했습니다.",
+    });
+  }
+});
 
-//     if (!mytodo) {
-//       return res.status(404).json({
-//         message: "해당 Todo 리스트를 찾을 수 없습니다."
-//       });
-//     } else if (mytodo.userId !== userId) {
-//       return res.status(401).json({ 
-//         message: "로그인 후 이용 가능한 기능입니다."
-//       });
-//     };
+// yourtodo 좋아요 상태 수정 API
+router.put("/yourtodo/:userId/like", authMiddleware, async (req, res) => {
+  try {
+    const source = res.locals.user["dataValues"]["userId"];
+    const target = req.params.userId;
+    let likeStatus;
+    // console.log(typeof source,typeof target)
 
-//     // 우선순위 변경
-//     const todoChanged = await Todo.update({ todoPriority }, { where: { todoId } });
+    // User 존재 여부 확인
+    const userCheck = await User.findOne({ where: { userId: Number(target) } });
 
-//     return res.status(201).json({});
-//   } catch (err) {
-//     console.log(err);
-//     res.status(403).send({
-//       message: "mytodo 중요도 변경에 실패했습니다."
-//     })
-//   }
-// });
+    if (!userCheck) {
+      return res.status(404).json({ message: "해당 유저를 찾을 수 없습니다." });
+    }
 
-// // mytodo 내용 수정 API
-// router.put("/mytodo/:todoId/content", authMiddleware, async (req, res) => {
-//   try {
-//     const { userId } = res.locals.user;
-//     const { todoId } = req.params;
-//     const { todoContent } = req.body;
+    // isLike 상태 조회 및 값이 존재하지 않는다면 기본값으로 생성
+    const like = await Like.findOrCreate({
+      where: { sourceUserId: source, targetUserId: Number(target) },
+      defaults: {
+        sourceUserId: source,
+        targetUserId: Number(target),
+        isLike: false,
+      },
+    });
 
-//     // mytodo list 존재 여부 확인
-//     const mytodo = await Todo.findOne({ where: { todoId } });
+    // like 상태 변경
+    const checkIsLike = like[0]["dataValues"]["isLike"];
+    if (checkIsLike === false) {
+      likeStatus = true;
+    } else {
+      likeStatus = false;
+    }
 
-//     if (!mytodo) {
-//       return res.status(404).json({
-//         message: "해당 Todo 리스트를 찾을 수 없습니다."
-//       });
-//     } else if (mytodo.userId !== userId) {
-//       return res.status(401).json({ 
-//         message: "로그인 후 이용 가능한 기능입니다."
-//       });
-//     };
+    // isLike 상태 변경
+    await Like.update(
+      {
+        isLike: likeStatus,
+      },
+      {
+        where: {
+          [Op.and]: [
+            { sourceUserId: source },
+            { targetUserId: Number(target) },
+          ],
+        },
+      }
+    );
 
-//     // 내용 변경
-//     const todoChanged = await Todo.update({ todoContent }, { where: { todoId } });
-
-//     return res.status(201).json({});
-//   } catch (err) {
-//     console.log(err);
-//     res.status(403).send({
-//       message: "mytodo 리스트 내용 변경에 실패했습니다."
-//     })
-//   }
-// });
-
-// // mytodo 완료 여부 수정 API
-// router.put("/mytodo/:todoId/isdone", authMiddleware, async (req, res) => {
-//   try {
-//     const { userId } = res.locals.user;
-//     const { todoId } = req.params;
-//     let todoStatus;
-
-//     // mytodo list 존재 여부 확인
-//     const mytodo = await Todo.findOne({ where: { todoId } });
-
-//     if (!mytodo) {
-//       return res.status(404).json({
-//         message: "해당 Todo 리스트를 찾을 수 없습니다."
-//       });
-//     } else if (mytodo.userId !== userId) {
-//       return res.status(401).json({ 
-//         message: "로그인 후 이용 가능한 기능입니다."
-//       });
-//     };
-
-//     if (mytodo.todoStatus === true) {
-//       todoStatus = false;
-//     } else {
-//       todoStatus = true;
-//     };
-
-//     // 내용 변경
-//     const todoChanged = await Todo.update({ todoStatus }, { where: { todoId } });
-
-//     return res.status(201).json({});
-//   } catch (err) {
-//     console.log(err);
-//     res.status(403).send({
-//       message: "mytodo 리스트 내용 변경에 실패했습니다."
-//     })
-//   }
-// });
-
-// // mytodo 삭제 API
-// router.delete("/mytodo/:todoId", authMiddleware, async (req, res) => {
-//   try {
-//     const { userId } = res.locals.user;
-//     const { todoId } = req.params;
-
-//     // mytodo list 존재 여부 확인
-//     const mytodo = await Todo.findOne({ where: { todoId } });
-
-//     if (!mytodo) {
-//       return res.status(404).json({
-//         message: "해당 Todo 리스트를 찾을 수 없습니다.",
-//       });
-//     } else if (mytodo.userId !== userId) {
-//       return res.status(401).json({ 
-//         message: "로그인 후 이용 가능한 기능입니다." 
-//       });
-//     };
-
-//     // 게시글 내용 삭제
-//     const deleteTodo = await Todo.destroy({ where: { todoId } });
-
-//     return res.status(201).json({});
-//   } catch (error) {
-//     console.log(err);
-//     res.status(403).send({
-//       message: "mytodo 리스트 삭제에 실패했습니다."
-//     })
-//   }
-// });
+    return res.status(201).json({});
+  } catch (err) {
+    console.log(err);
+    res.status(403).send({
+      message: "yourtodo 좋아요 상태 변경에 실패했습니다.",
+    });
+  }
+});
 
 module.exports = router;

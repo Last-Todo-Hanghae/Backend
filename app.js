@@ -22,13 +22,19 @@ function logMiddleware(req, res, next) {
 app.use(logMiddleware);
 
 // routes/index.js 파일에서 라우터 정보 가져오기
-const { indexRouter, signupRouter, signinRouter, mytodoRouter, yourtodoRouter } = require("./routes");
+const {
+  indexRouter,
+  signupRouter,
+  signinRouter,
+  mytodoRouter,
+  yourtodoRouter,
+} = require("./routes");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/", indexRouter);
-app.use("/api", [ signupRouter, signinRouter, mytodoRouter, yourtodoRouter ]);
+app.use("/api", [signupRouter, signinRouter, mytodoRouter, yourtodoRouter]);
 
 // 에러 처리 미들웨어
 app.use((err, req, res, next) => {

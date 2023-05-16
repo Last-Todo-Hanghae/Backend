@@ -11,4 +11,10 @@ indexRouter.get("/", async (req, res) => {
   res.send("index 페이지 입니다.");
 });
 
-module.exports = { indexRouter, signupRouter, signinRouter, mytodoRouter, yourtodoRouter };
+module.exports = {
+  indexRouter,
+  signupRouter,
+  signinRouter,
+  mytodoRouter,
+  yourtodoRouter,
+};
