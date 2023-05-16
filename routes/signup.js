@@ -39,7 +39,7 @@ router.post("/signup", async (req, res) => {
     const existsUser = await User.findOne({ where: { userName } });
     if (existsUser) {
       return res.status(401).json({
-        message: "중복된 닉네임 입니다."
+        message: "중복된 닉네임 입니다.",
       });
     }
 
@@ -53,7 +53,7 @@ router.post("/signup", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(403).send({
-      message: "회원가입에 실패했습니다."
+      message: "회원가입에 실패했습니다.",
     });
   }
 });

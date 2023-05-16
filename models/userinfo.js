@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class UserInfo extends Model {
     /**
@@ -12,39 +10,41 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // User -> UserInfo
       this.belongsTo(models.User, {
-        targetKey: 'userId',
-        foreignKey: 'userId'
+        targetKey: "userId",
+        foreignKey: "userId",
       });
     }
   }
-  UserInfo.init({
-    userInfoId: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER
+  UserInfo.init(
+    {
+      userInfoId: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      userId: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      userImage: {
+        allowNull: true,
+        type: DataTypes.STRING,
+      },
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
     },
-    userId: {
-      allowNull: false,
-      primaryKey: true,
-      // unique: true,
-      type: DataTypes.INTEGER
-    },
-    userImage: {
-      allowNull: true,
-      type: DataTypes.STRING
-    },
-    createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE
-    },
-    updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE
+    {
+      sequelize,
+      modelName: "UserInfo",
     }
-  }, {
-    sequelize,
-    modelName: 'UserInfo',
-  });
+  );
   return UserInfo;
 };
