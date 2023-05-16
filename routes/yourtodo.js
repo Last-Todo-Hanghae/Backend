@@ -101,7 +101,6 @@ router.put("/yourtodo/:userId/like", authMiddleware, async (req, res) => {
     const source = res.locals.user["dataValues"]["userId"];
     const target = req.params.userId;
     let likeStatus;
-    // console.log(typeof source,typeof target)
 
     // User 존재 여부 확인
     const userCheck = await User.findOne({ where: { userId: Number(target) } });

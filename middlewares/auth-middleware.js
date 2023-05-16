@@ -84,7 +84,7 @@ module.exports = async (req, res, next) => {
 
     if (!isRefreshTokenValidate)
       return res
-        .status(419)
+        .status(402)
         .json({ message: "Refresh Token이 만료되었습니다." });
     const decodedToken = jwt.verify(accessAuthToken, secretKey);
     const id = decodedToken.userId;
@@ -94,7 +94,7 @@ module.exports = async (req, res, next) => {
         where: { refreshToken: id },
       });
       if (!accessTokenId)
-        return res.status(419).json({
+        return res.status(402).json({
           message: "Refresh Token의 정보가 서버에 존재하지 않습니다.",
         });
 

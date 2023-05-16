@@ -132,7 +132,7 @@ router.put("/mytodo/:todoId/content", authMiddleware, async (req, res) => {
     }
 
     // 내용 변경
-    const todoChanged = await Todo.update(
+    await Todo.update(
       { todoContent },
       { where: { todoId } }
     );
