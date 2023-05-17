@@ -53,3 +53,39 @@ npx sequelize db:create
 ```
 npx sequelize db:migrate
 ```
+
+# 우분투 서버 설정(우분투 20.04)
+43.201.8.30
+**초기 설정**
+1. nodejs 설치
+```
+curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
+2. git clone 및 패키지 설치
+```
+git clone https://github.com/Last-Todo-Hanghae/Backend.git
+cd Backend
+npm install
+```
+
+3. ENV 파일 구성
+```
+보안상 설명 생략
+```
+
+4. iptables 설정 3000 -> 80
+```
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3000
+```
+
+5. pm2 설치
+```
+sudo -s
+npm install -g pm2
+<!-- 실행 -->
+pm2 start app.js
+<!-- 종료 -->
+pm2 delete 0 
+```
