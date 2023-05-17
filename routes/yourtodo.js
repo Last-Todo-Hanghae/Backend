@@ -13,6 +13,7 @@ const authMiddleware = require("../middlewares/auth-middleware");
 // yourtodo 전체 리스트 조회 API
 router.get("/yourtodo", authMiddleware, async (req, res) => {
   try {
+    const source = res.locals.user["dataValues"]["userId"];
     const UserAll = await User.findAll({
       attributes: ["userName"],
       include: [
@@ -35,6 +36,7 @@ router.get("/yourtodo", authMiddleware, async (req, res) => {
           model: Like,
           required: false,
           attributes: ["isLike"],
+          where: { sourceUserId: source }
         },
       ],
       order: [[Like, "updatedAt", "DESC"]],
@@ -50,6 +52,7 @@ router.get("/yourtodo", authMiddleware, async (req, res) => {
 
 router.get("/yourtodo/:userId", authMiddleware, async (req, res) => {
   try {
+    const source = res.locals.user["dataValues"]["userId"];
     const { userId } = req.params;
 
     // User 존재 여부 확인
@@ -83,6 +86,7 @@ router.get("/yourtodo/:userId", authMiddleware, async (req, res) => {
           model: Like,
           required: false,
           attributes: ["isLike"],
+          where: { sourceUserId: source }
         },
       ],
     });
