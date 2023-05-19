@@ -1,14 +1,8 @@
-const express = require("express");
-const router = express.Router();
-
 // 모델 가져오기
 const { Todo, User, UserInfo } = require("../models");
 
-// 인증을 위한 미들웨어 가져오기
-const authMiddleware = require("../middlewares/auth-middleware");
-
 // mytodo 작성 API
-router.post("/mytodo", authMiddleware, async (req, res) => {
+const mytodoPost = async (req, res) => {
   try {
     const { userId } = res.locals.user;
     const { userName } = res.locals.user;
@@ -33,10 +27,10 @@ router.post("/mytodo", authMiddleware, async (req, res) => {
       message: "mytodo 리스트 추가에 실패했습니다.",
     });
   }
-});
+};
 
 // mytodo 전체 조회 API
-router.get("/mytodo", authMiddleware, async (req, res) => {
+const mytodoGet = async (req, res) => {
   try {
     const { userId } = res.locals.user;
     const todoAll = await Todo.findAll({
@@ -74,10 +68,10 @@ router.get("/mytodo", authMiddleware, async (req, res) => {
       message: "mytodo 리스트 조회에 실패했습니다.",
     });
   }
-});
+};
 
 // mytodo 중요도 수정 API
-router.put("/mytodo/:todoId/priority", authMiddleware, async (req, res) => {
+const mytodoPutPriority = async (req, res) => {
   try {
     const { userId } = res.locals.user;
     const { todoId } = req.params;
@@ -109,10 +103,10 @@ router.put("/mytodo/:todoId/priority", authMiddleware, async (req, res) => {
       message: "mytodo 중요도 변경에 실패했습니다.",
     });
   }
-});
+};
 
 // mytodo 내용 수정 API
-router.put("/mytodo/:todoId/content", authMiddleware, async (req, res) => {
+const mytodoPutContent = async (req, res) => {
   try {
     const { userId } = res.locals.user;
     const { todoId } = req.params;
@@ -132,10 +126,7 @@ router.put("/mytodo/:todoId/content", authMiddleware, async (req, res) => {
     }
 
     // 내용 변경
-    await Todo.update(
-      { todoContent },
-      { where: { todoId } }
-    );
+    await Todo.update({ todoContent }, { where: { todoId } });
 
     return res.status(201).json({});
   } catch (err) {
@@ -144,10 +135,10 @@ router.put("/mytodo/:todoId/content", authMiddleware, async (req, res) => {
       message: "mytodo 리스트 내용 변경에 실패했습니다.",
     });
   }
-});
+};
 
 // mytodo 완료 여부 수정 API
-router.put("/mytodo/:todoId/isdone", authMiddleware, async (req, res) => {
+const mytodoPutIsDone = async (req, res) => {
   try {
     const { userId } = res.locals.user;
     const { todoId } = req.params;
@@ -185,10 +176,10 @@ router.put("/mytodo/:todoId/isdone", authMiddleware, async (req, res) => {
       message: "mytodo 리스트 내용 변경에 실패했습니다.",
     });
   }
-});
+};
 
 // mytodo 삭제 API
-router.delete("/mytodo/:todoId", authMiddleware, async (req, res) => {
+const mytodoDelete = async (req, res) => {
   try {
     const { userId } = res.locals.user;
     const { todoId } = req.params;
@@ -216,6 +207,13 @@ router.delete("/mytodo/:todoId", authMiddleware, async (req, res) => {
       message: "mytodo 리스트 삭제에 실패했습니다.",
     });
   }
-});
+};
 
-module.exports = router;
+module.exports = {
+  mytodoPost,
+  mytodoGet,
+  mytodoPutPriority,
+  mytodoPutContent,
+  mytodoPutIsDone,
+  mytodoDelete,
+};

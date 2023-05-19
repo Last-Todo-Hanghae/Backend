@@ -1,10 +1,7 @@
-const jwt = require("jsonwebtoken");
-const express = require("express");
-const router = express.Router();
-
 // dotenv 파일을 통해 시크릿 정보 가저오기
 require("dotenv").config();
 const env = process.env;
+const jwt = require("jsonwebtoken");
 
 // 모델 가져오기
 const { User, Token } = require("../models");
@@ -13,7 +10,7 @@ const { User, Token } = require("../models");
 const { Op } = require("sequelize");
 
 // 인증을 위한 미들웨어 가져오기
-const authMiddleware = require("../middlewares/auth-middleware");
+// const authMiddleware = require("../middlewares/authMiddleware");
 
 // 시크릿 키 정의
 const secretKey = env.JWT_SECRET;
@@ -33,7 +30,7 @@ function createRefreshToken() {
 }
 
 // 로그인 API
-router.post("/signin", async (req, res) => {
+const signIn = async (req, res) => {
   try {
     const { userName, userPassword } = req.body;
     const user = await User.findOne({ where: { userName } });
@@ -76,10 +73,10 @@ router.post("/signin", async (req, res) => {
       message: "로그인에 실패했습니다.",
     });
   }
-});
+};
 
 // 비밀번호 변경 API
-router.put("/signin", authMiddleware, async (req, res) => {
+const userInfoChange = async (req, res) => {
   try {
     const { userName, userPassword, newPassword } = req.body;
     const user = await User.findOne({ where: { userName } });
@@ -113,10 +110,10 @@ router.put("/signin", authMiddleware, async (req, res) => {
       message: "비밀번호 변경에 실패했습니다.",
     });
   }
-});
+};
 
 // 로그아웃 API
-router.delete("/signout", authMiddleware, async (req, res) => {
+const signOut = async (req, res) => {
   try {
     const { userId } = res.locals.user    
 
@@ -135,6 +132,8 @@ router.delete("/signout", authMiddleware, async (req, res) => {
       message: "로그아웃에 실패했습니다.",
     });
   }
-});
+};
 
-module.exports = router;
+module.exports = {
+	signIn, userInfoChange, signOut
+};
