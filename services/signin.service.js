@@ -6,9 +6,6 @@ const jwt = require("jsonwebtoken");
 // 모델 가져오기
 const { User, Token } = require("../models");
 
-// Sequlize Operation 연산 사용을 위해 추가
-const { Op } = require("sequelize");
-
 // 시크릿 키 정의
 const secretKey = env.JWT_SECRET;
 
@@ -26,7 +23,7 @@ function createRefreshToken() {
   return refreshToken;
 }
 
-// 로그인 API
+// 로그인
 const signIn = async (userName, userPassword) => {
   try {
     const user = await User.findOne({ where: { userName } });
@@ -66,56 +63,6 @@ const signIn = async (userName, userPassword) => {
   }
 };
 
-// 비밀번호 변경 API
-const userInfoChange = async (userName, userPassword, newPassword) => {
-  try {
-    const user = await User.findOne({ where: { userName } });
-
-    // 아이디 및 비밀번호 유효성 검사
-    if (!user || userPassword !== user.userPassword) {
-      return res.status(401).json({
-        message: "비밀번호 또는 아이디가 일치하지 않습니다.",
-      });
-    }
-
-    // 패스워드 변경
-    await User.update(
-      {
-        userPassword: newPassword,
-      },
-      {
-        where: {
-          [Op.and]: [{ userName }, { userPassword }],
-        },
-      }
-    );
-
-    return {};
-  } catch (err) {
-    console.log(err);
-    res.status(403).send({
-      message: "비밀번호 변경에 실패했습니다.",
-    });
-  }
-};
-
-// 로그아웃 API
-const signOut = async (userId) => {
-  try {
-    // Refresh Token을 가지고 해당 유저의 정보를 서버에 저장
-    await Token.destroy({ where: { refreshToken: userId } });
-
-    return true;
-  } catch (err) {
-    console.log(err);
-    res.status(403).send({
-      message: "로그아웃에 실패했습니다.",
-    });
-  }
-};
-
 module.exports = {
   signIn,
-  userInfoChange,
-  signOut,
 };
