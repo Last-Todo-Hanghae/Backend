@@ -8,14 +8,6 @@ const app = express();
 // 서비스 포트 정의
 const port = process.env.SERVICE_PORT;
 
-// routes/index.js 파일에서 라우터 정보 가져오기
-// const {
-//   signupRouter,
-//   signinRouter,
-//   mytodoRouter,
-//   yourtodoRouter,
-// } = require("./routes");
-
 app.use(logMiddleware); // 로그 미들웨어를 애플리케이션에 적용
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

@@ -1,26 +1,28 @@
 // 모델 가져오기
 const { Todo, User, UserInfo } = require("../models");
 
-// mytodo 작성 API
-const mytodoPost = async (req, res) => {
+// mytodo 작성
+const mytodoPost = async (
+  userId,
+  userName,
+  todoContent,
+  todoStatus,
+  todoPriority
+) => {
   try {
-    const { userId } = res.locals.user;
-    const { userName } = res.locals.user;
-    const { todoContent, todoStatus, todoPriority } = req.body;
-
     const myTodo = await Todo.create({
       userId,
       todoContent,
       todoStatus,
       todoPriority,
     });
-    return res.status(201).json({
+    return {
       userName,
       todoId: myTodo.todoId,
       todoContent: myTodo.todoContent,
       todoStatus: myTodo.todoStatus,
       todoPriority: myTodo.todoPriority,
-    });
+    };
   } catch (err) {
     console.log(err);
     res.status(403).send({
@@ -29,10 +31,9 @@ const mytodoPost = async (req, res) => {
   }
 };
 
-// mytodo 전체 조회 API
-const mytodoGet = async (req, res) => {
+// mytodo 전체 조회
+const mytodoGet = async (userId) => {
   try {
-    const { userId } = res.locals.user;
     const todoAll = await Todo.findAll({
       attributes: [
         "todoId",
@@ -61,7 +62,7 @@ const mytodoGet = async (req, res) => {
         ["updatedAt", "DESC"],
       ],
     });
-    return res.status(200).json({ todoAll });
+    return todoAll;
   } catch (err) {
     console.log(err);
     res.status(403).send({
@@ -71,12 +72,8 @@ const mytodoGet = async (req, res) => {
 };
 
 // mytodo 중요도 수정 API
-const mytodoPutPriority = async (req, res) => {
+const mytodoPutPriority = async (userId, todoId, todoPriority) => {
   try {
-    const { userId } = res.locals.user;
-    const { todoId } = req.params;
-    const { todoPriority } = req.body;
-
     // mytodo list 존재 여부 확인
     const mytodo = await Todo.findOne({ where: { todoId } });
 
@@ -91,12 +88,9 @@ const mytodoPutPriority = async (req, res) => {
     }
 
     // 우선순위 변경
-    const todoChanged = await Todo.update(
-      { todoPriority },
-      { where: { todoId } }
-    );
+    await Todo.update({ todoPriority }, { where: { todoId } });
 
-    return res.status(201).json({});
+    return true;
   } catch (err) {
     console.log(err);
     res.status(403).send({
@@ -105,13 +99,9 @@ const mytodoPutPriority = async (req, res) => {
   }
 };
 
-// mytodo 내용 수정 API
-const mytodoPutContent = async (req, res) => {
+// mytodo 내용 수정
+const mytodoPutContent = async (userId, todoId, todoContent) => {
   try {
-    const { userId } = res.locals.user;
-    const { todoId } = req.params;
-    const { todoContent } = req.body;
-
     // mytodo list 존재 여부 확인
     const mytodo = await Todo.findOne({ where: { todoId } });
 
@@ -128,7 +118,7 @@ const mytodoPutContent = async (req, res) => {
     // 내용 변경
     await Todo.update({ todoContent }, { where: { todoId } });
 
-    return res.status(201).json({});
+    return true;
   } catch (err) {
     console.log(err);
     res.status(403).send({
@@ -138,12 +128,8 @@ const mytodoPutContent = async (req, res) => {
 };
 
 // mytodo 완료 여부 수정 API
-const mytodoPutIsDone = async (req, res) => {
+const mytodoPutIsDone = async (userId, todoId) => {
   try {
-    const { userId } = res.locals.user;
-    const { todoId } = req.params;
-    let todoStatus;
-
     // mytodo list 존재 여부 확인
     const mytodo = await Todo.findOne({ where: { todoId } });
 
@@ -157,33 +143,24 @@ const mytodoPutIsDone = async (req, res) => {
       });
     }
 
-    if (mytodo.todoStatus === true) {
-      todoStatus = false;
-    } else {
-      todoStatus = true;
-    }
-
     // todo 상태 변경
-    const todoChanged = await Todo.update(
-      { todoStatus },
+    await Todo.update(
+      { todoStatus: !mytodo.todoStatus },
       { where: { todoId } }
     );
 
-    return res.status(201).json({});
+    return true;
   } catch (err) {
     console.log(err);
     res.status(403).send({
-      message: "mytodo 리스트 내용 변경에 실패했습니다.",
+      message: "mytodo 완료 여부 변경에 실패했습니다.",
     });
   }
 };
 
-// mytodo 삭제 API
-const mytodoDelete = async (req, res) => {
+// mytodo 삭제
+const mytodoDelete = async (userId, todoId) => {
   try {
-    const { userId } = res.locals.user;
-    const { todoId } = req.params;
-
     // mytodo list 존재 여부 확인
     const mytodo = await Todo.findOne({ where: { todoId } });
 
@@ -198,9 +175,9 @@ const mytodoDelete = async (req, res) => {
     }
 
     // 게시글 내용 삭제
-    const deleteTodo = await Todo.destroy({ where: { todoId } });
+    await Todo.destroy({ where: { todoId } });
 
-    return res.status(201).json({});
+    return true;
   } catch (error) {
     console.log(err);
     res.status(403).send({

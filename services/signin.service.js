@@ -9,9 +9,6 @@ const { User, Token } = require("../models");
 // Sequlize Operation 연산 사용을 위해 추가
 const { Op } = require("sequelize");
 
-// 인증을 위한 미들웨어 가져오기
-// const authMiddleware = require("../middlewares/authMiddleware");
-
 // 시크릿 키 정의
 const secretKey = env.JWT_SECRET;
 
@@ -30,9 +27,8 @@ function createRefreshToken() {
 }
 
 // 로그인 API
-const signIn = async (req, res) => {
+const signIn = async (userName, userPassword) => {
   try {
-    const { userName, userPassword } = req.body;
     const user = await User.findOne({ where: { userName } });
 
     // 아이디 및 비밀번호 유효성 검사
@@ -61,12 +57,7 @@ const signIn = async (req, res) => {
     // Refresh Token을 가지고 해당 유저의 정보를 서버에 저장
     await Token.create({ refreshToken: id });
 
-    // Access Token을 Cookie에 전달
-    res.cookie("accessToken", `Bearer ${accessToken}`, { secure: false });
-    // Refresh Token을 Cookie에 전달한다.
-    res.cookie("refreshToken", `Bearer ${refreshToken}`, { secure: false });
-
-    return res.status(200).json({ accessToken, refreshToken });
+    return { accessToken, refreshToken };
   } catch (err) {
     console.log(err);
     res.status(403).send({
@@ -76,9 +67,8 @@ const signIn = async (req, res) => {
 };
 
 // 비밀번호 변경 API
-const userInfoChange = async (req, res) => {
+const userInfoChange = async (userName, userPassword, newPassword) => {
   try {
-    const { userName, userPassword, newPassword } = req.body;
     const user = await User.findOne({ where: { userName } });
 
     // 아이디 및 비밀번호 유효성 검사
@@ -95,15 +85,12 @@ const userInfoChange = async (req, res) => {
       },
       {
         where: {
-          [Op.and]: [
-            { userName },
-            { userPassword },
-          ],
+          [Op.and]: [{ userName }, { userPassword }],
         },
       }
     );
 
-    return res.status(201).json({});
+    return {};
   } catch (err) {
     console.log(err);
     res.status(403).send({
@@ -113,19 +100,12 @@ const userInfoChange = async (req, res) => {
 };
 
 // 로그아웃 API
-const signOut = async (req, res) => {
+const signOut = async (userId) => {
   try {
-    const { userId } = res.locals.user    
-
     // Refresh Token을 가지고 해당 유저의 정보를 서버에 저장
     await Token.destroy({ where: { refreshToken: userId } });
 
-    // 공백의 Access Token을 Cookie에 전달 하여 Access Token 정보 초기화
-    res.cookie("accessToken", `Bearer `, { secure: false });
-    // 공백의 Refresh Token을 Cookie에 전달 하여 Access Token 정보 초기화
-    res.cookie("refreshToken", `Bearer `, { secure: false });
-
-    return res.status(201).json({});
+    return true;
   } catch (err) {
     console.log(err);
     res.status(403).send({
@@ -135,5 +115,7 @@ const signOut = async (req, res) => {
 };
 
 module.exports = {
-	signIn, userInfoChange, signOut
+  signIn,
+  userInfoChange,
+  signOut,
 };

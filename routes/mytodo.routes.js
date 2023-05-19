@@ -5,7 +5,7 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/authMiddleware");
 
 // mytodo controller
-const mytodoController = require("../controllers/mytodoController");
+const mytodoController = require("../controllers/mytodo.controller");
 router.post("/", authMiddleware, mytodoController.mytodoPost);
 router.get("/", authMiddleware, mytodoController.mytodoGet);
 router.put("/:todoId/priority", authMiddleware, mytodoController.mytodoPutPriority);

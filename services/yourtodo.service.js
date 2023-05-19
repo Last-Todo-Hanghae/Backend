@@ -5,9 +5,8 @@ const { Op } = require("sequelize");
 const { Todo, User, UserInfo, Like } = require("../models");
 
 // yourtodo 전체 리스트 조회 API
-const yourtodoGet = async (req, res) => {
+const yourtodoGet = async (source) => {
   try {
-    const source = res.locals.user["dataValues"]["userId"];
     const UserAll = await User.findAll({
       attributes: ["userName"],
       include: [
@@ -30,12 +29,12 @@ const yourtodoGet = async (req, res) => {
           model: Like,
           required: false,
           attributes: ["isLike"],
-          where: { sourceUserId: source }
+          where: { sourceUserId: source },
         },
       ],
       order: [[Like, "updatedAt", "DESC"]],
     });
-    return res.status(200).json({ UserAll });
+    return UserAll;
   } catch (err) {
     console.log(err);
     res.status(403).send({
@@ -44,11 +43,8 @@ const yourtodoGet = async (req, res) => {
   }
 };
 
-const yourtodoGetDetail = async (req, res) => {
+const yourtodoGetDetail = async (source, userId) => {
   try {
-    const source = res.locals.user["dataValues"]["userId"];
-    const { userId } = req.params;
-
     // User 존재 여부 확인
     const userCheck = await User.findOne({ where: { userId } });
 
@@ -80,11 +76,11 @@ const yourtodoGetDetail = async (req, res) => {
           model: Like,
           required: false,
           attributes: ["isLike"],
-          where: { sourceUserId: source }
+          where: { sourceUserId: source },
         },
       ],
     });
-    return res.status(200).json({ yourTodo });
+    return yourTodo;
   } catch (err) {
     console.log(err);
     res.status(403).send({
@@ -94,13 +90,10 @@ const yourtodoGetDetail = async (req, res) => {
 };
 
 // yourtodo 좋아요 상태 수정 API
-const yourtodoPutLike = async (req, res) => {
+const yourtodoPutLike = async (source, target) => {
   try {
-    const source = res.locals.user["dataValues"]["userId"];
-    const target = req.params.userId;
-
     // User 존재 여부 확인
-    const userCheck = await User.findOne({ where: { userId: Number(target) } });
+    const userCheck = await User.findOne({ where: { userId: target } });
 
     if (!userCheck) {
       return res.status(404).json({ message: "해당 유저를 찾을 수 없습니다." });
@@ -108,7 +101,7 @@ const yourtodoPutLike = async (req, res) => {
 
     // isLike 상태 조회 및 값이 존재하지 않는다면 기본값으로 생성
     const like = await Like.findOrCreate({
-      where: { sourceUserId: source, targetUserId: Number(target) },
+      where: { sourceUserId: source, targetUserId: target },
       defaults: {
         sourceUserId: source,
         targetUserId: Number(target),
@@ -126,15 +119,12 @@ const yourtodoPutLike = async (req, res) => {
       },
       {
         where: {
-          [Op.and]: [
-            { sourceUserId: source },
-            { targetUserId: Number(target) },
-          ],
+          [Op.and]: [{ sourceUserId: source }, { targetUserId: target }],
         },
       }
     );
 
-    return res.status(201).json({});
+    return true;
   } catch (err) {
     console.log(err);
     res.status(403).send({

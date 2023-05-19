@@ -1,28 +1,31 @@
-const { User } = require("../models");
+const { User, UserInfo } = require("../models");
 
 const signUp = async (userName, userPassword) => {
-	try {
-		// userName이 동일한 데이터가 있는지 확인
-		const existsUser = await User.findOne({ where: { userName } });
-		if (existsUser) {
-			return res.status(401).json({
-				message: "중복된 닉네임 입니다.",
-			});
-		}
-		// User 테이블에 회원정보 저장
-		const createUser = await User.create({ userName, userPassword });
-		return createUser.userId;
-	} catch (err) {
-		console.log(err);
-		res.status(403).send({
-			message: "회원가입에 실패했습니다.",
-		});
-	}
-}
+  try {
+    // userName이 동일한 데이터가 있는지 확인
+    const existsUser = await User.findOne({ where: { userName } });
+    if (existsUser) {
+      return res.status(401).json({
+        message: "중복된 닉네임 입니다.",
+      });
+    }
+    // User 테이블에 회원정보 저장
+    const createUser = await User.create({ userName, userPassword });
+    // 유저 정보 테이블에 회원정보 저장
+    const createUserinfo = await UserInfo.create({ userId: createUser.userId });
+
+    return createUser, createUserinfo;
+  } catch (err) {
+    console.log(err);
+    res.status(403).send({
+      message: "회원가입에 실패했습니다.",
+    });
+  }
+};
 
 module.exports = {
-	signUp
-}
+  signUp,
+};
 
 // // 아이디 유효성, 비밀번호 유효성, 비밀번호 확인 로직
 // const { userName, userPassword, confirmPassword } = req.body;
