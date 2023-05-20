@@ -12,11 +12,13 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.User, {
         targetKey: "userId",
         foreignKey: "sourceUserId",
+        onDelete: 'CASCADE',
       });
 
       this.belongsTo(models.User, {
         targetKey: "userName",
         foreignKey: "targetUserId",
+        onDelete: 'CASCADE',
       });
     }
   }
@@ -45,10 +47,12 @@ module.exports = (sequelize, DataTypes) => {
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
       updatedAt: {
         allowNull: false,
         type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
     },
     {

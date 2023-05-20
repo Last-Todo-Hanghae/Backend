@@ -5,14 +5,13 @@ const mytodoPost = async (req, res) => {
   try {
     const { userId } = res.locals.user;
     const { userName } = res.locals.user;
-    const { todoContent, todoStatus, todoPriority } = req.body;
+    const { todoContent, todoPriority } = req.body;
 
     // 입력값 유효성 검사
     if (
       !userId ||
       !userName ||
       !todoContent ||
-      todoStatus === undefined ||
       !todoPriority
     ) {
       return res
@@ -24,7 +23,6 @@ const mytodoPost = async (req, res) => {
       userId,
       userName,
       todoContent,
-      todoStatus,
       todoPriority
     );
 
@@ -32,7 +30,7 @@ const mytodoPost = async (req, res) => {
       userName: result.userName,
       todoId: result.todoId,
       todoContent: result.todoContent,
-      todoStatus: result.todoStatus,
+      todoIsDone: result.todoIsDone,
       todoPriority: result.todoPriority,
     });
   } catch (err) {
@@ -55,15 +53,15 @@ const mytodoGet = async (req, res) => {
         .json({ message: "입력 정보가 올바르지 않습니다." });
     }
 
-    const todoAll = await mytodoService.mytodoGet(userId);
+    const { userName, userImage, mytodo } = await mytodoService.mytodoGet(userId);
 
     return res.status(200).json({
-      todoAll,
+      userName, userImage, mytodo,
     });
   } catch (err) {
     console.log(err);
     res.status(403).send({
-      message: "mytodo 리스트 추가에 실패했습니다.",
+      message: "mytodo 리스트 조회에 실패했습니다.",
     });
   }
 };

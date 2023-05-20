@@ -1,26 +1,20 @@
 // 모델 가져오기
-const { Todo, User, UserInfo } = require("../models");
+const { Todo, User, UserInfo, sequelize } = require("../models");
 
 // mytodo 작성
-const mytodoPost = async (
-  userId,
-  userName,
-  todoContent,
-  todoStatus,
-  todoPriority
-) => {
+const mytodoPost = async ( userId, userName, todoContent, todoPriority ) => {
   try {
     const myTodo = await Todo.create({
       userId,
       todoContent,
-      todoStatus,
+      todoIsDone: false,
       todoPriority,
     });
     return {
       userName,
       todoId: myTodo.todoId,
       todoContent: myTodo.todoContent,
-      todoStatus: myTodo.todoStatus,
+      todoIsDone: myTodo.todoIsDone,
       todoPriority: myTodo.todoPriority,
     };
   } catch (err) {
@@ -34,35 +28,38 @@ const mytodoPost = async (
 // mytodo 전체 조회
 const mytodoGet = async (userId) => {
   try {
-    const todoAll = await Todo.findAll({
-      attributes: [
-        "todoId",
-        "todoContent",
-        "todoStatus",
-        "todoPriority",
-        "updatedAt",
-      ],
+    const todoAll = await User.findAll({
+      attributes: ["userName"],
       where: { userId },
       include: [
         {
-          model: User,
+          model: UserInfo,
           required: true,
-          attributes: ["userName"],
-          include: [
-            {
-              model: UserInfo,
-              required: true,
-              attributes: ["userImage"],
-            },
+          attributes: ["userImage"],
+        },
+        {
+          model: Todo,
+          required: true,
+          attributes: [
+            "todoId",
+            "todoContent",
+            "todoIsDone",
+            "todoPriority",
+            "updatedAt",
           ],
         },
       ],
       order: [
-        ["todoStatus", "ASC"],
-        ["updatedAt", "DESC"],
+        [ Todo, "todoIsDone", "ASC" ],
+        [ Todo, "updatedAt", "DESC" ],
       ],
     });
-    return todoAll;
+
+    return {
+      userName: todoAll[0].dataValues.userName,
+      userImage: todoAll[0].dataValues.UserInfo.dataValues.userImage,
+      mytodo: todoAll[0].dataValues.Todos,
+    };
   } catch (err) {
     console.log(err);
     res.status(403).send({
@@ -145,7 +142,7 @@ const mytodoPutIsDone = async (userId, todoId) => {
 
     // todo 상태 변경
     await Todo.update(
-      { todoStatus: !mytodo.todoStatus },
+      { todoIsDone: !mytodo.todoIsDone },
       { where: { todoId } }
     );
 

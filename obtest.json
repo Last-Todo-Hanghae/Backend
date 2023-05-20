@@ -1,0 +1,33 @@
+{
+  "todoAll": [
+    {
+      "userName": "testuser1",
+      "UserInfo": {
+        "userImage": null
+      },
+      "Todos": [
+        {
+          "todoId": 1,
+          "todoContent": "물 1L 마시기",
+          "todoIsDone": false,
+          "todoPriority": "today",
+          "updatedAt": "2023-05-20T05:13:11.000Z"
+        },
+        {
+          "todoId": 2,
+          "todoContent": "물 1L 마시기",
+          "todoIsDone": false,
+          "todoPriority": "today",
+          "updatedAt": "2023-05-20T05:13:51.000Z"
+        },
+        {
+          "todoId": 3,
+          "todoContent": "물 1L 마시기",
+          "todoIsDone": false,
+          "todoPriority": "today",
+          "updatedAt": "2023-05-20T05:13:55.000Z"
+        }
+      ]
+    }
+  ]
+}

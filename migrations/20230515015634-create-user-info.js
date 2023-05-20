@@ -12,8 +12,12 @@ module.exports = {
       userId: {
         allowNull: false,
         primaryKey: true,
-        // unique: true,
         type: Sequelize.INTEGER,
+        references: {
+          model: 'Users',
+          key: 'userId',
+        },
+        onDelete: 'cascade',
       },
       userImage: {
         allowNull: true,

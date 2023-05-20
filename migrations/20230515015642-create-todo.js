@@ -12,14 +12,18 @@ module.exports = {
       userId: {
         allowNull: false,
         primaryKey: true,
-        // unique: true,
         type: Sequelize.INTEGER,
+        references: {
+          model: 'Users',
+          key: 'userId',
+        },
+        onDelete: 'cascade',
       },
       todoContent: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      todoStatus: {
+      todoIsDone: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
       },

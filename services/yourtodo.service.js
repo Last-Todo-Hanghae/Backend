@@ -18,9 +18,9 @@ const yourtodoGet = async (source) => {
         {
           model: Todo,
           required: true,
-          attributes: ["todoId", "todoContent", "todoStatus", "updatedAt"],
+          attributes: ["todoId", "todoContent", "todoIsDone", "updatedAt"],
           order: [
-            ["todoStatus", "ASC"],
+            ["todoIsDone", "ASC"],
             ["updatedAt", "DESC"],
           ],
           limit: 3,
@@ -32,7 +32,11 @@ const yourtodoGet = async (source) => {
           where: { sourceUserId: source },
         },
       ],
-      order: [[Like, "updatedAt", "DESC"]],
+      order: [
+        [Like, "updatedAt", "DESC"],
+        [Todo, "todoIsDone", "ASC"],
+        [Like, "updatedAt", "DESC"],
+      ],
     });
     return UserAll;
   } catch (err) {
@@ -66,9 +70,9 @@ const yourtodoGetDetail = async (source, userId) => {
         {
           model: Todo,
           required: true,
-          attributes: ["todoId", "todoContent", "todoStatus", "todoPriority"],
+          attributes: ["todoId", "todoContent", "todoIsDone", "todoPriority"],
           order: [
-            ["todoStatus", "ASC"],
+            ["todoIsDone", "ASC"],
             ["updatedAt", "DESC"],
           ],
         },
