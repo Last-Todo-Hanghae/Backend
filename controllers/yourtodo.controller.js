@@ -13,9 +13,9 @@ const yourtodoGet = async (req, res) => {
         .json({ message: "입력 정보가 올바르지 않습니다." });
     }
 
-    const UserAll = await yourtodoService.yourtodoGet(source);
+    const { yourtodo } = await yourtodoService.yourtodoGet(source);
 
-    return res.status(200).json({ UserAll });
+    return res.status(200).json({ yourtodo });
   } catch (err) {
     console.log(err);
     res.status(403).send({

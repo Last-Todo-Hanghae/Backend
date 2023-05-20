@@ -7,7 +7,7 @@ const { Todo, User, UserInfo, Like } = require("../models");
 // yourtodo 전체 리스트 조회 API
 const yourtodoGet = async (source) => {
   try {
-    const UserAll = await User.findAll({
+    const yourtodo = await User.findAll({
       attributes: ["userName"],
       include: [
         {
@@ -34,11 +34,21 @@ const yourtodoGet = async (source) => {
       ],
       order: [
         [Like, "updatedAt", "DESC"],
-        [Todo, "todoIsDone", "ASC"],
-        [Like, "updatedAt", "DESC"],
       ],
     });
-    return UserAll;
+
+    
+
+    // let likeValue;
+    // if (yourtodo[0].dataValues.Likes.dataValues) {
+    //   likeValue = yourtodo[0].dataValues.Likes.dataValues.isLike;
+    // } else {
+    //   likeValue = []
+    // };
+
+    return {
+      yourtodo
+    };
   } catch (err) {
     console.log(err);
     res.status(403).send({

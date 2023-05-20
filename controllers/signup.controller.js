@@ -16,7 +16,7 @@ const signUp = async (req, res) => {
     return res.status(201).json({});
   } catch (err) {
     console.log(err);
-    res.status(403).send({
+    res.status(401).send({
       message: "회원가입에 실패했습니다.",
     });
   }

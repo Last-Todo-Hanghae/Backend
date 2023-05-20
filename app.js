@@ -3,13 +3,12 @@ const cookieParser = require("cookie-parser"); // Cookie Parser 모듈 사용 - 
 const express = require("express"); // express 모듈 사용
 const routes = require("./routes"); // routes/index.js 파일에서 라우터 정보 가져오기
 const logMiddleware = require("./middlewares/logMiddleware"); // log Middleware 모듈 가져오기
+const cors = require('cors') // cors 미들웨어 추가
 const app = express();
-var cors = require('cors')
 
-// 서비스 포트 정의
-const port = process.env.SERVICE_PORT;
+const port = process.env.SERVICE_PORT; // 서비스 포트 정의
 
-app.use(cors())
+app.use(cors()) // cors 미들웨어 추가
 app.use(logMiddleware); // 로그 미들웨어를 애플리케이션에 적용
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

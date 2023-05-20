@@ -10,7 +10,7 @@ const mytodoRouter = require("./mytodo.routes");
 const yourtodoRouter = require("./yourtodo.routes");
 
 router.use("/signup", signupRouter.router);
-router.use("/signin", signinRouter.router);
+router.use("/login", signinRouter.router);
 router.use("/userinfo", userinfoRouter.router);
 router.use("/signout", signoutRouter.router);
 router.use("/mytodo", mytodoRouter.router);
