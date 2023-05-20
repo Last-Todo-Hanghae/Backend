@@ -37,6 +37,19 @@ const yourtodoGet = async (source) => {
       ],
     });
 
+    const modifiedResult = yourtodo.map((item) => {
+      const modifiedItem = item.toJSON(); // Sequelize 모델을 일반 객체로 변환
+    
+      console.log(modifiedItem.UserInfo.userImage);
+      // "UserInfo" 속성을 "userImage" 속성으로 변경
+      // modifiedItem.UserInfo.userImage = modifiedItem.UserInfo.userImage;
+      // delete modifiedItem.UserInfo;
+      // ...modifiedItem, data: ''
+
+    
+      return modifiedItem;
+    });
+    // console.log(typeof modifiedResult)
     // yourtodo.forEach(function(obj) {
     //   obj.userImage = obj.UserInfo.userImage;
     //   delete obj.UserInfo;
@@ -49,9 +62,7 @@ const yourtodoGet = async (source) => {
     //   likeValue = []
     // };
 
-    return {
-      yourtodo
-    };
+    return modifiedResult;
   } catch (err) {
     console.log(err);
     res.status(403).send({
