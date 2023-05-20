@@ -12,7 +12,7 @@ const yourtodoRouter = require("./yourtodo.routes");
 router.use("/signup", signupRouter.router);
 router.use("/login", signinRouter.router);
 router.use("/userinfo", userinfoRouter.router);
-router.use("/signout", signoutRouter.router);
+router.use("/logout", signoutRouter.router);
 router.use("/mytodo", mytodoRouter.router);
 router.use("/yourtodo", yourtodoRouter.router);
 

@@ -37,7 +37,10 @@ const yourtodoGet = async (source) => {
       ],
     });
 
-    
+    // yourtodo.forEach(function(obj) {
+    //   obj.userImage = obj.UserInfo.userImage;
+    //   delete obj.UserInfo;
+    // })
 
     // let likeValue;
     // if (yourtodo[0].dataValues.Likes.dataValues) {

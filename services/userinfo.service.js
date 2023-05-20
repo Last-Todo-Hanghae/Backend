@@ -37,6 +37,22 @@ const pwChange = async (userName, userPassword, newPassword) => {
   }
 };
 
+// 비밀번호 변경 API
+const getUserInfo = async (userId) => {
+  try {
+    const user = await User.findOne({ where: { userId } });
+
+    return {
+      userName: user.userName
+    };
+  } catch (err) {
+    console.log(err);
+    res.status(403).send({
+      message: "비밀번호 변경에 실패했습니다.",
+    });
+  }
+};
+
 module.exports = {
-  pwChange,
+  pwChange, getUserInfo
 };
