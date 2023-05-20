@@ -20,17 +20,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
       });
 
-      // User -> Token
-      this.hasMany(models.Token, {
-        sourceKey: "userId",
-        foreignKey: "userId",
-      });
-
-      this.hasMany(models.Token, {
-        sourceKey: "userName",
-        foreignKey: "userName",
-      });
-
       // User -> Like
       this.hasMany(models.Like, {
         sourceKey: "userId",
@@ -63,10 +52,12 @@ module.exports = (sequelize, DataTypes) => {
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
       updatedAt: {
         allowNull: false,
         type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
     },
     {

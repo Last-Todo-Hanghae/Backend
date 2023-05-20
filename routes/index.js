@@ -1,20 +1,19 @@
 const express = require("express");
-const indexRouter = express.Router();
+const router = express.Router();
 
 // 라우터 구성
-const signupRouter = require("./signup");
-const signinRouter = require("./signin");
-const mytodoRouter = require("./mytodo");
-const yourtodoRouter = require("./yourtodo");
+const signupRouter = require("./signup.routes");
+const signinRouter = require("./signin.routes");
+const userinfoRouter = require("./userinfo.routes");
+const signoutRouter = require("./signout.routes");
+const mytodoRouter = require("./mytodo.routes");
+const yourtodoRouter = require("./yourtodo.routes");
 
-indexRouter.get("/", async (req, res) => {
-  res.send("index 페이지 입니다.");
-});
+router.use("/signup", signupRouter.router);
+router.use("/login", signinRouter.router);
+router.use("/userinfo", userinfoRouter.router);
+router.use("/logout", signoutRouter.router);
+router.use("/mytodo", mytodoRouter.router);
+router.use("/yourtodo", yourtodoRouter.router);
 
-module.exports = {
-  indexRouter,
-  signupRouter,
-  signinRouter,
-  mytodoRouter,
-  yourtodoRouter,
-};
+module.exports = router;

@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.User, {
         targetKey: "userId",
         foreignKey: "userId",
+        onDelete: 'CASCADE',
       });
     }
   }
@@ -32,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      todoStatus: {
+      todoIsDone: {
         allowNull: false,
         type: DataTypes.BOOLEAN,
       },
@@ -43,10 +44,12 @@ module.exports = (sequelize, DataTypes) => {
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
       updatedAt: {
         allowNull: false,
         type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
     },
     {

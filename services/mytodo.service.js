@@ -1,88 +1,76 @@
-const express = require("express");
-const router = express.Router();
-
 // 모델 가져오기
-const { Todo, User, UserInfo } = require("../models");
+const { Todo, User, UserInfo, sequelize } = require("../models");
 
-// 인증을 위한 미들웨어 가져오기
-const authMiddleware = require("../middlewares/auth-middleware");
-
-// mytodo 작성 API
-router.post("/mytodo", authMiddleware, async (req, res) => {
+// mytodo 작성
+const mytodoPost = async ( userId, userName, todoContent, todoPriority ) => {
   try {
-    const { userId } = res.locals.user;
-    const { userName } = res.locals.user;
-    const { todoContent, todoStatus, todoPriority } = req.body;
-
     const myTodo = await Todo.create({
       userId,
       todoContent,
-      todoStatus,
+      todoIsDone: false,
       todoPriority,
     });
-    return res.status(201).json({
+    return {
       userName,
       todoId: myTodo.todoId,
       todoContent: myTodo.todoContent,
-      todoStatus: myTodo.todoStatus,
+      todoIsDone: myTodo.todoIsDone,
       todoPriority: myTodo.todoPriority,
-    });
+    };
   } catch (err) {
     console.log(err);
     res.status(403).send({
       message: "mytodo 리스트 추가에 실패했습니다.",
     });
   }
-});
+};
 
-// mytodo 전체 조회 API
-router.get("/mytodo", authMiddleware, async (req, res) => {
+// mytodo 전체 조회
+const mytodoGet = async (userId) => {
   try {
-    const { userId } = res.locals.user;
-    const todoAll = await Todo.findAll({
-      attributes: [
-        "todoId",
-        "todoContent",
-        "todoStatus",
-        "todoPriority",
-        "updatedAt",
-      ],
+    const todoAll = await User.findAll({
+      attributes: ["userName"],
       where: { userId },
       include: [
         {
-          model: User,
+          model: UserInfo,
           required: true,
-          attributes: ["userName"],
-          include: [
-            {
-              model: UserInfo,
-              required: true,
-              attributes: ["userImage"],
-            },
+          attributes: ["userImage"],
+        },
+        {
+          model: Todo,
+          required: true,
+          attributes: [
+            "todoId",
+            "todoContent",
+            "todoIsDone",
+            "todoPriority",
+            "updatedAt",
           ],
         },
       ],
       order: [
-        ["todoStatus", "ASC"],
-        ["updatedAt", "DESC"],
+        [ Todo, "todoIsDone", "ASC" ],
+        [ Todo, "updatedAt", "DESC" ],
       ],
     });
-    return res.status(200).json({ todoAll });
+
+    return {
+      userName: todoAll[0].dataValues.userName,
+      userImage: todoAll[0].dataValues.UserInfo.dataValues.userImage,
+      mytodo: todoAll[0].dataValues.Todos,
+    };
   } catch (err) {
     console.log(err);
     res.status(403).send({
       message: "mytodo 리스트 조회에 실패했습니다.",
     });
   }
-});
+};
 
 // mytodo 중요도 수정 API
-router.put("/mytodo/:todoId/priority", authMiddleware, async (req, res) => {
+const mytodoPutPriority = async (userId, todoId, todoPriority) => {
   try {
-    const { userId } = res.locals.user;
-    const { todoId } = req.params;
-    const { todoPriority } = req.body;
-
     // mytodo list 존재 여부 확인
     const mytodo = await Todo.findOne({ where: { todoId } });
 
@@ -97,27 +85,20 @@ router.put("/mytodo/:todoId/priority", authMiddleware, async (req, res) => {
     }
 
     // 우선순위 변경
-    const todoChanged = await Todo.update(
-      { todoPriority },
-      { where: { todoId } }
-    );
+    await Todo.update({ todoPriority }, { where: { todoId } });
 
-    return res.status(201).json({});
+    return true;
   } catch (err) {
     console.log(err);
     res.status(403).send({
       message: "mytodo 중요도 변경에 실패했습니다.",
     });
   }
-});
+};
 
-// mytodo 내용 수정 API
-router.put("/mytodo/:todoId/content", authMiddleware, async (req, res) => {
+// mytodo 내용 수정
+const mytodoPutContent = async (userId, todoId, todoContent) => {
   try {
-    const { userId } = res.locals.user;
-    const { todoId } = req.params;
-    const { todoContent } = req.body;
-
     // mytodo list 존재 여부 확인
     const mytodo = await Todo.findOne({ where: { todoId } });
 
@@ -132,27 +113,20 @@ router.put("/mytodo/:todoId/content", authMiddleware, async (req, res) => {
     }
 
     // 내용 변경
-    await Todo.update(
-      { todoContent },
-      { where: { todoId } }
-    );
+    await Todo.update({ todoContent }, { where: { todoId } });
 
-    return res.status(201).json({});
+    return true;
   } catch (err) {
     console.log(err);
     res.status(403).send({
       message: "mytodo 리스트 내용 변경에 실패했습니다.",
     });
   }
-});
+};
 
 // mytodo 완료 여부 수정 API
-router.put("/mytodo/:todoId/isdone", authMiddleware, async (req, res) => {
+const mytodoPutIsDone = async (userId, todoId) => {
   try {
-    const { userId } = res.locals.user;
-    const { todoId } = req.params;
-    let todoStatus;
-
     // mytodo list 존재 여부 확인
     const mytodo = await Todo.findOne({ where: { todoId } });
 
@@ -166,33 +140,24 @@ router.put("/mytodo/:todoId/isdone", authMiddleware, async (req, res) => {
       });
     }
 
-    if (mytodo.todoStatus === true) {
-      todoStatus = false;
-    } else {
-      todoStatus = true;
-    }
-
     // todo 상태 변경
-    const todoChanged = await Todo.update(
-      { todoStatus },
+    await Todo.update(
+      { todoIsDone: !mytodo.todoIsDone },
       { where: { todoId } }
     );
 
-    return res.status(201).json({});
+    return true;
   } catch (err) {
     console.log(err);
     res.status(403).send({
-      message: "mytodo 리스트 내용 변경에 실패했습니다.",
+      message: "mytodo 완료 여부 변경에 실패했습니다.",
     });
   }
-});
+};
 
-// mytodo 삭제 API
-router.delete("/mytodo/:todoId", authMiddleware, async (req, res) => {
+// mytodo 삭제
+const mytodoDelete = async (userId, todoId) => {
   try {
-    const { userId } = res.locals.user;
-    const { todoId } = req.params;
-
     // mytodo list 존재 여부 확인
     const mytodo = await Todo.findOne({ where: { todoId } });
 
@@ -207,15 +172,22 @@ router.delete("/mytodo/:todoId", authMiddleware, async (req, res) => {
     }
 
     // 게시글 내용 삭제
-    const deleteTodo = await Todo.destroy({ where: { todoId } });
+    await Todo.destroy({ where: { todoId } });
 
-    return res.status(201).json({});
+    return true;
   } catch (error) {
     console.log(err);
     res.status(403).send({
       message: "mytodo 리스트 삭제에 실패했습니다.",
     });
   }
-});
+};
 
-module.exports = router;
+module.exports = {
+  mytodoPost,
+  mytodoGet,
+  mytodoPutPriority,
+  mytodoPutContent,
+  mytodoPutIsDone,
+  mytodoDelete,
+};
