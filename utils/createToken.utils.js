@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 // 시크릿 키 정의
 const secretKey = env.JWT_SECRET;
 
-class Token {
+class TokenUtil {
   constructor(id, name) {
     this.id = id;
     this.name = name;
@@ -75,4 +75,7 @@ class VerifyToken {
 	}
 }
 
-module.exports = { Token, VerifyToken };
+module.exports = {
+	TokenUtil, 
+	VerifyToken
+}

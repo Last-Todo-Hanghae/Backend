@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { User, Token } = require("../models");
+const { TokenUtil } = require("../utils/createToken.utils");
 
 // dotenv 파일을 통해 시크릿 정보 가저오기
 require("dotenv").config();
