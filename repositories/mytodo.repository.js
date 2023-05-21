@@ -1,9 +1,6 @@
 // 모델 가져오기
 const { Todo, User, UserInfo } = require("../models");
 
-// util 추가
-// const { parseModelToFlatObject } = require('../utils/sequelize.helper');
-
 // mytodo 작성
 const mytodoPost = async ( userId, todoContent, todoPriority ) => {
   const myTodo = await Todo.create({

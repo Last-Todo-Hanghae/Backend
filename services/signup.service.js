@@ -20,29 +20,3 @@ const signUp = async (userName, userPassword, res) => {
 module.exports = {
   signUp,
 };
-
-// // 아이디 유효성, 비밀번호 유효성, 비밀번호 확인 로직
-// const { userName, userPassword, confirmPassword } = req.body;
-
-// // 아이디 유효성 검사
-// const idRegex = /^[a-zA-Z0-9]{3,}$/;
-// if (!idRegex.test(userName)) {
-//   return res.status(402).json({
-//     message: "아이디 유효성 검사 실패"
-//   });
-// }
-
-// // 패스워드 유효성 검사
-// const pwRegex = new RegExp(`^((?!${userName}).){4,}$`);
-// if (!pwRegex.test(userPassword)) {
-//   return res.status(402).json({
-//     message: "패스워드 유효성 검사 실패"
-//   });
-// }
-
-// // 패스워드와 패스워드 확인 비교
-// if (userPassword !== confirmPassword) {
-//   return res.status(402).json({
-//     message: "패스워드가 패스워드 확인란과 다릅니다."
-//   });
-// }

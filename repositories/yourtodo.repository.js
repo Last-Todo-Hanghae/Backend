@@ -1,9 +1,6 @@
 // Sequlize Operation 연산 사용을 위해 추가
 const { Op } = require("sequelize");
 
-// util 추가
-const { parseModelToFlatObject } = require('../utils/sequelize.helper');
-
 // 모델 가져오기
 const { Todo, User, UserInfo, Like } = require("../models");
 

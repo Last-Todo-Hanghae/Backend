@@ -1,27 +1,6 @@
 const CustomError = require("../utils/error.utils");
+const Token = require("../utils/createToken.utils");
 const signinRepository = require("../repositories/signin.repository");
-
-// dotenv 파일을 통해 시크릿 정보 가저오기
-require("dotenv").config();
-const env = process.env;
-const jwt = require("jsonwebtoken");
-
-// 시크릿 키 정의
-const secretKey = env.JWT_SECRET;
-
-// Access Token 생성 함수
-function createAccessToken(id, name) {
-  const accessToken = jwt.sign({ userId: id, userName: name }, secretKey, {
-    expiresIn: "1h",
-  });
-  return accessToken;
-}
-
-// Refresh Token 생성 함수
-function createRefreshToken() {
-  const refreshToken = jwt.sign({}, secretKey, { expiresIn: "7d" });
-  return refreshToken;
-}
 
 // 로그인
 const signIn = async (userName, userPassword) => {
@@ -33,8 +12,9 @@ const signIn = async (userName, userPassword) => {
   }
 
   // JWT 토큰 생성
-  const accessToken = createAccessToken(user.userId, user.userName);
-  const refreshToken = createRefreshToken();
+  const token = new Token(user.userId, user.userName);
+  const accessToken = token.createAccessToken()
+  const refreshToken = token.createRefreshToken();
 
   // Refresh Token 존재여부 확인
   const checkToken = await signinRepository.findToken(refreshToken);
