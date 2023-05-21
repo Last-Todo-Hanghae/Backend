@@ -1,3 +1,4 @@
+const CustomError = require("../utils/error.utils");
 // 모델 가져오기
 const { User } = require("../models");
 
@@ -6,51 +7,40 @@ const { Op } = require("sequelize");
 
 // 비밀번호 변경 API
 const pwChange = async (userName, userPassword, newPassword) => {
-  try {
-    const user = await User.findOne({ where: { userName } });
+  const user = await User.findOne({ where: { userName } });
 
-    // 아이디 및 비밀번호 유효성 검사
-    if (!user || userPassword !== user.userPassword) {
-      return res.status(401).json({
-        message: "비밀번호 또는 아이디가 일치하지 않습니다.",
-      });
-    }
-
-    // 패스워드 변경
-    await User.update(
-      {
-        userPassword: newPassword,
-      },
-      {
-        where: {
-          [Op.and]: [{ userName }, { userPassword }],
-        },
-      }
-    );
-
-    return {};
-  } catch (err) {
-    console.log(err);
-    res.status(403).send({
-      message: "비밀번호 변경에 실패했습니다.",
-    });
+  // 아이디 및 비밀번호 유효성 검사
+  if (!user || userPassword !== user.userPassword) {
+    throw new CustomError("비밀번호 또는 아이디가 일치하지 않습니다.", 401);
   }
+
+  // 패스워드 변경
+  await User.update(
+    {
+      userPassword: newPassword,
+    },
+    {
+      where: {
+        [Op.and]: [{ userName }, { userPassword }],
+      },
+    }
+  );
+
+  return {};
 };
 
 // 비밀번호 변경 API
 const getUserInfo = async (userId) => {
-  try {
-    const user = await User.findOne({ where: { userId } });
+  const user = await User.findOne({ where: { userId } });
 
-    return {
-      userName: user.userName
-    };
-  } catch (err) {
-    console.log(err);
-    res.status(403).send({
-      message: "비밀번호 변경에 실패했습니다.",
-    });
+  // 아이디 유효성 검사
+  if (!user) {
+    throw new CustomError("토큰 정보가 올바르지 않습니다.", 401);
   }
+
+  return {
+    userName: user.userName
+  };
 };
 
 module.exports = {
