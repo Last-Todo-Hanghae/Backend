@@ -6,7 +6,7 @@ const logMiddleware = require("./middlewares/logMiddleware"); // log Middleware 
 const cors = require('cors') // cors 미들웨어 추가
 const app = express();
 
-const port = process.env.SERVICE_PORT; // 서비스 포트 정의
+const port = process.env.SERVICE_PORT || 3000; // 서비스 포트 정의
 
 app.use(cors()) // cors 미들웨어 추가
 app.use(logMiddleware); // 로그 미들웨어를 애플리케이션에 적용

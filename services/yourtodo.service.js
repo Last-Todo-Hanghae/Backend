@@ -1,87 +1,25 @@
 const CustomError = require("../utils/error.utils");
-// Sequlize Operation 연산 사용을 위해 추가
-const { Op } = require("sequelize");
+const yourtodoRepository = require("../repositories/yourtodo.repository");
 
-// util 추가
-const { parseModelToFlatObject } = require('../utils/sequelize.helper');
-
-// 모델 가져오기
-const { Todo, User, UserInfo, Like } = require("../models");
-
-// yourtodo 전체 리스트 조회 API
+// yourtodo 전체 리스트 조회
 const yourtodoGet = async (source) => {
-  const yourtodo = await User.findAll({
-    attributes: ["userName"],
-    include: [
-      {
-        model: UserInfo,
-        required: true,
-        attributes: ["userImage"],
-      },
-      {
-        model: Like,
-        required: false,
-        attributes: ["isLike", "updatedAt"],
-        where: { sourceUserId: source },
-      },
-      {
-        model: Todo,
-        required: false,
-        attributes: ["todoId", "todoContent", "todoIsDone", "updatedAt"],
-        order: [
-          ["todoIsDone", "ASC"],
-          ["updatedAt", "DESC"],
-        ],
-        limit: 3,
-      },
-    ],
-    order: [
-      [ Like, "updatedAt", "DESC"],
-    ],
-  })
-
+  const yourtodo = await yourtodoRepository.yourtodoGet(source);
   return yourtodo;
 };
 
-// yourtodo 상세 조회 API
+// yourtodo 상세 조회
 const yourtodoGetDetail = async (source, userId) => {
   // User 존재 여부 확인
-  const userCheck = await User.findOne({ where: { userId } });
+  const userCheck = await yourtodoRepository.findUser(userId);
 
+  // 유효성 검사
   if (!userCheck) {
     throw new CustomError("해당 유저를 찾을 수 없습니다.", 404);
   }
 
-  const yourTodo = await User.findAll({
-    attributes: ["userName"],
-    where: { userId },
-    include: [
-      {
-        model: UserInfo,
-        required: true,
-        attributes: ["userImage"],
-      },
-      {
-        model: Todo,
-        required: false,
-        attributes: ["todoId", "todoContent", "todoIsDone", "todoPriority"],
-      },
-    ],
-    order: [
-      [Todo, "todoIsDone", "ASC"],
-      [Todo, "updatedAt", "DESC"],
-    ],
-  });
-
-  const isLike = await Like.findAll({
-    attributes: ["isLike"],
-    where: {
-      [Op.and]: [
-        { sourceUserId: source },
-        { targetUserId: userId }
-      ]
-    }
-  });
+  // yourtodo 테이블 조회
+  const yourTodo = await yourtodoRepository.yourtodoGetDetail(userId);
+  const isLike = await yourtodoRepository.yourtodoGetLike(source, userId);
 
   return { 
     userName: yourTodo[0].dataValues.userName,
@@ -91,40 +29,21 @@ const yourtodoGetDetail = async (source, userId) => {
   };
 };
 
-// yourtodo 좋아요 상태 수정 API
+// yourtodo 좋아요 상태 수정
 const yourtodoPutLike = async (source, target) => {
   // User 존재 여부 확인
-  const userCheck = await User.findOne({ where: { userId: target } });
+  const userCheck = await yourtodoRepository.findUser(source);
 
+  // 유효성 검사
   if (!userCheck) {
     throw new CustomError("해당 유저를 찾을 수 없습니다.", 404);
   }
 
   // isLike 상태 조회 및 값이 존재하지 않는다면 기본값으로 생성
-  const like = await Like.findOrCreate({
-    where: { sourceUserId: source, targetUserId: target },
-    defaults: {
-      sourceUserId: source,
-      targetUserId: Number(target),
-      isLike: false,
-    },
-  });
-
-  // like 상태 조회
-  const likeStatus = like[0]["dataValues"]["isLike"];
+  const like = await yourtodoRepository.checkIsLike(source, target);
 
   // isLike 상태 변경
-  await Like.update(
-    {
-      isLike: !likeStatus,
-    },
-    {
-      where: {
-        [Op.and]: [{ sourceUserId: source }, { targetUserId: target }],
-      },
-    }
-  );
-
+  await yourtodoRepository.yourtodoPutLike(!like[0].dataValues.isLike, source, target);
   return true;
 };
 

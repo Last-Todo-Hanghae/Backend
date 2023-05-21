@@ -115,6 +115,7 @@ module.exports = async (req, res, next) => {
         message: "로그인 후 이용 가능한 기능입니다.",
       });
     }
+    res.locals.refreshToken = refreshToken;
     res.locals.user = user;
     next();
   } catch (err) {

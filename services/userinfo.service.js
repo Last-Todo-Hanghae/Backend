@@ -1,13 +1,9 @@
 const CustomError = require("../utils/error.utils");
-// 모델 가져오기
-const { User } = require("../models");
-
-// Sequlize Operation 연산 사용을 위해 추가
-const { Op } = require("sequelize");
+const userinfoRepository = require("../repositories/userinfo.repository");
 
 // 비밀번호 변경 API
 const pwChange = async (userName, userPassword, newPassword) => {
-  const user = await User.findOne({ where: { userName } });
+  const user = await userinfoRepository.findUser(userName);
 
   // 아이디 및 비밀번호 유효성 검사
   if (!user || userPassword !== user.userPassword) {
@@ -15,31 +11,21 @@ const pwChange = async (userName, userPassword, newPassword) => {
   }
 
   // 패스워드 변경
-  await User.update(
-    {
-      userPassword: newPassword,
-    },
-    {
-      where: {
-        [Op.and]: [{ userName }, { userPassword }],
-      },
-    }
-  );
-
+  await userinfoRepository.pwChange(userName, userPassword, newPassword);
   return {};
 };
 
-// 비밀번호 변경 API
+// 유저 정보 조회(userName)
 const getUserInfo = async (userId) => {
-  const user = await User.findOne({ where: { userId } });
+  const findedUserName = await userinfoRepository.getUserInfo(userId);
 
   // 아이디 유효성 검사
-  if (!user) {
+  if (!findedUserName) {
     throw new CustomError("토큰 정보가 올바르지 않습니다.", 401);
   }
 
   return {
-    userName: user.userName
+    userName: findedUserName
   };
 };
 
