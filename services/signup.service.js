@@ -1,27 +1,21 @@
-const { User, UserInfo } = require("../models");
+const CustomError = require("../utils/error.utils");
+const signupRepository = require("../repositories/signup.repository");
 
-const signUp = async (userName, userPassword) => {
-  try {
-    // userName이 동일한 데이터가 있는지 확인
-    const existsUser = await User.findOne({ where: { userName } });
-    if (existsUser) {
-      return res.status(401).json({
-        message: "중복된 닉네임 입니다.",
-      });
-    }
-    // User 테이블에 회원정보 저장
-    const createUser = await User.create({ userName, userPassword });
-    // 유저 정보 테이블에 회원정보 저장
-    const createUserinfo = await UserInfo.create({ userId: createUser.userId });
-
-    return createUser, createUserinfo;
-  } catch (err) {
-    console.log(err);
-    res.status(403).send({
-      message: "회원가입에 실패했습니다.",
-    });
+const signUp = async (userName, userPassword, res) => {
+  // userName이 동일한 데이터가 있는지 확인
+  const findUser = await signupRepository.findUser(userName);
+  if (findUser) {
+    throw new CustomError("중복된 닉네임입니다.", 401);
   }
-};
+  
+  // user 생성
+  const createUser = await signupRepository.createUser(userName, userPassword);
+
+  // userInfo 생성
+  const createUserinfo = await signupRepository.createUserinfo(createUser.userId)
+
+  return createUser, createUserinfo;
+}
 
 module.exports = {
   signUp,

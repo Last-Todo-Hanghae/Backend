@@ -1,3 +1,4 @@
+const CustomError = require("../utils/error.utils");
 const yourtodoService = require("../services/yourtodo.service");
 
 // yourtodo 전체 리스트 조회
@@ -8,22 +9,27 @@ const yourtodoGet = async (req, res) => {
 
     // 입력값 유효성 검사
     if (!source) {
-      return res
-        .status(400)
-        .json({ message: "입력 정보가 올바르지 않습니다." });
+      throw new CustomError("입력값이 올바르지 않습니다.", 402);
     }
 
-    const { yourtodo } = await yourtodoService.yourtodoGet(source);
+    const yourtodo = await yourtodoService.yourtodoGet(source);
 
     return res.status(200).json({ yourtodo });
   } catch (err) {
+    if (err instanceof CustomError) {
+      // 커스텀 에러에 따라 다른 상태 코드와 에러 메시지를 클라이언트에게 보냄
+      return res.status(err.statusCode).json({
+        message: err.message,
+      });
+    }
     console.log(err);
-    res.status(403).send({
+    return res.status(403).json({
       message: "yourtodo 리스트 조회에 실패했습니다.",
     });
   }
 };
 
+// yourtodo 상세 조회
 const yourtodoGetDetail = async (req, res) => {
   try {
     const { userId } = res.locals.user;
@@ -32,20 +38,24 @@ const yourtodoGetDetail = async (req, res) => {
 
     // 입력값 유효성 검사
     if (!source || !target) {
-      return res
-        .status(400)
-        .json({ message: "입력 정보가 올바르지 않습니다." });
+      throw new CustomError("입력값이 올바르지 않습니다.", 402);
     }
 
-    const yourTodo = await yourtodoService.yourtodoGetDetail(
+    const { userName, userImage, isLike, mytodo } = await yourtodoService.yourtodoGetDetail(
       source,
       Number(target)
     );
 
-    return res.status(200).json({ yourTodo });
+    return res.status(200).json({ userName, userImage, isLike, mytodo });
   } catch (err) {
+    if (err instanceof CustomError) {
+      // 커스텀 에러에 따라 다른 상태 코드와 에러 메시지를 클라이언트에게 보냄
+      return res.status(err.statusCode).json({
+        message: err.message,
+      });
+    }
     console.log(err);
-    res.status(403).send({
+    return res.status(403).json({
       message: "yourtodo 상세 조회에 실패했습니다.",
     });
   }
@@ -62,8 +72,14 @@ const yourtodoPutLike = async (req, res) => {
 
     return res.status(201).json({});
   } catch (err) {
+    if (err instanceof CustomError) {
+      // 커스텀 에러에 따라 다른 상태 코드와 에러 메시지를 클라이언트에게 보냄
+      return res.status(err.statusCode).json({
+        message: err.message,
+      });
+    }
     console.log(err);
-    res.status(403).send({
+    return res.status(403).json({
       message: "yourtodo 좋아요 상태 변경에 실패했습니다.",
     });
   }
