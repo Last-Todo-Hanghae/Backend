@@ -1,5 +1,5 @@
 const CustomError = require("../utils/error.utils");
-const Token = require("../utils/createToken.utils");
+const { TokenUtil } = require("../utils/createToken.utils");
 const signinRepository = require("../repositories/signin.repository");
 
 // 로그인
@@ -12,9 +12,9 @@ const signIn = async (userName, userPassword) => {
   }
 
   // JWT 토큰 생성
-  const token = new Token(user.userId, user.userName);
-  const accessToken = token.createAccessToken()
-  const refreshToken = token.createRefreshToken();
+  const tokenUtil = new TokenUtil(user.userId, user.userName);
+  const accessToken = tokenUtil.createAccessToken()
+  const refreshToken = tokenUtil.createRefreshToken();
 
   // Refresh Token 존재여부 확인
   const checkToken = await signinRepository.findToken(refreshToken);
