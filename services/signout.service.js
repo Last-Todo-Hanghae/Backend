@@ -1,10 +1,9 @@
 const CustomError = require("../utils/error.utils");
-// 모델 가져오기
-const { Token } = require("../models");
+const signoutRepository = require("../repositories/signout.repository");
 
 // 로그아웃 API
-const signOut = async (userId) => {
-  await Token.destroy({ where: { refreshToken: userId } });
+const signOut = async (refreshToken) => {
+  await signoutRepository.signOut(refreshToken);
   return true;
 };
 

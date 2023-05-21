@@ -49,10 +49,12 @@ function getAccessTokenPayload(accessToken) {
 // 사용자 인증 미들웨어
 module.exports = async (req, res, next) => {
   try {
+    // console.log(req.rawHeaders)
     // 쿠키 값이 없을 경우
     if (
-      req.cookies.accessToken === undefined ||
-      req.cookies.refreshToken === undefined
+      req.headers === undefined
+      // req.cookies.accessToken === undefined ||
+      // req.cookies.refreshToken === undefined
     ) {
       return res.status(401).json({
         message: "로그인 후 이용 가능한 기능입니다.",
@@ -61,8 +63,12 @@ module.exports = async (req, res, next) => {
 
     // 쿠키 일치 여부 확인
     // console.log(req)
-    const accessToken = req.cookies.accessToken;
-    const refreshToken = req.cookies.refreshToken;
+    // const accessToken = req.cookies.accessToken;
+    // const refreshToken = req.cookies.refreshToken;
+    
+    const accessToken = req.headers.accessToken;
+    const refreshToken = req.headers.refreshToken;
+    
     // console.log(accessToken)
     // console.log(refreshToken)
     const [accessAuthType, accessAuthToken] = (accessToken ?? "").split(" ");
@@ -115,6 +121,7 @@ module.exports = async (req, res, next) => {
         message: "로그인 후 이용 가능한 기능입니다.",
       });
     }
+    res.locals.refreshToken = refreshToken;
     res.locals.user = user;
     next();
   } catch (err) {

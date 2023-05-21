@@ -3,8 +3,8 @@ const signoutService = require("../services/signout.service");
 
 const signOut = async (req, res) => {
   try {
-    const { userId } = res.locals.user;
-    const status = await signoutService.signOut(userId);
+    const refreshToken = res.locals.refreshToken;
+    const status = await signoutService.signOut(refreshToken);
 
     if (status) {
       // 공백의 Access Token을 Cookie에 전달 하여 Access Token 정보 초기화

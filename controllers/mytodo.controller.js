@@ -49,6 +49,7 @@ const mytodoPost = async (req, res) => {
 // mytodo 전체 조회
 const mytodoGet = async (req, res) => {
   try {
+    console.log(res)
     const { userId } = res.locals.user;
 
     // 입력값 유효성 검사
