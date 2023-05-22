@@ -6,6 +6,13 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 // yourtodo controller
 const yourtodoController = require("../controllers/yourtodo.controller");
+router.get("/", authMiddleware, yourtodoController.yourtodoGet);
+router.get("/:userId", authMiddleware, yourtodoController.yourtodoGetDetail);
+router.put("/:userId/like", authMiddleware, yourtodoController.yourtodoPutLike);
+
+module.exports = {
+  router
+};
 
 /**
  * @swagger
@@ -165,10 +172,3 @@ const yourtodoController = require("../controllers/yourtodo.controller");
  *                example:
  *                  { "message": "해당 유저를 찾을 수 없습니다." }
  */
-router.get("/", authMiddleware, yourtodoController.yourtodoGet);
-router.get("/:userId", authMiddleware, yourtodoController.yourtodoGetDetail);
-router.put("/:userId/like", authMiddleware, yourtodoController.yourtodoPutLike);
-
-module.exports = {
-  router
-};

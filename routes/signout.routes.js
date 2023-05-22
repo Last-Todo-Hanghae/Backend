@@ -6,6 +6,11 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 // userInfo controller
 const signoutController = require("../controllers/signout.controller");
+router.delete("/", authMiddleware, signoutController.signOut);
+
+module.exports = {
+  router
+};
 
 /**
  * @swagger
@@ -33,8 +38,3 @@ const signoutController = require("../controllers/signout.controller");
  *                example:
  *                  { "message": "로그아웃에 실패했습니다." }
  */
-router.delete("/", authMiddleware, signoutController.signOut);
-
-module.exports = {
-  router
-};

@@ -3,6 +3,11 @@ const router = express.Router();
 
 // signup controller
 const signupController = require("../controllers/signup.controller");
+router.post("/", signupController.signUp);
+
+module.exports = {
+  router
+};
 
 /**
  * @swagger
@@ -44,8 +49,3 @@ const signupController = require("../controllers/signup.controller");
  *                example:
  *                  { message: "회원가입에 실패했습니다." }
  */
-router.post("/", signupController.signUp);
-
-module.exports = {
-  router
-};

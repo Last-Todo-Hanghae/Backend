@@ -6,6 +6,12 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 // userInfo controller
 const userInfoController = require("../controllers/userinfo.controller");
+router.get("/", authMiddleware, userInfoController.getUserInfo);
+router.put("/", authMiddleware, userInfoController.pwChange);
+
+module.exports = {
+  router
+};
 
 /**
  * @swagger
@@ -92,9 +98,3 @@ const userInfoController = require("../controllers/userinfo.controller");
  *                example:
  *                  { "message": "비밀번호 변경에 실패했습니다." }
  */
-router.get("/", authMiddleware, userInfoController.getUserInfo);
-router.put("/", authMiddleware, userInfoController.pwChange);
-
-module.exports = {
-  router
-};

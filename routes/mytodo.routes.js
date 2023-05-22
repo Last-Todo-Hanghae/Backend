@@ -6,6 +6,16 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 // mytodo controller
 const mytodoController = require("../controllers/mytodo.controller");
+router.post("/", authMiddleware, mytodoController.mytodoPost);
+router.get("/", authMiddleware, mytodoController.mytodoGet);
+router.put("/:todoId/priority", authMiddleware, mytodoController.mytodoPutPriority);
+router.put("/:todoId/content", authMiddleware, mytodoController.mytodoPutContent);
+router.put("/:todoId/isdone", authMiddleware, mytodoController.mytodoPutIsDone);
+router.delete("/:todoId", authMiddleware, mytodoController.mytodoDelete);
+
+module.exports = {
+  router
+};
 
 /**
  * @swagger
@@ -241,13 +251,3 @@ const mytodoController = require("../controllers/mytodo.controller");
  *                example:
  *                  { "message": "해당 mytodo 항목을 찾을 수 없습니다." }
  */
-router.post("/", authMiddleware, mytodoController.mytodoPost);
-router.get("/", authMiddleware, mytodoController.mytodoGet);
-router.put("/:todoId/priority", authMiddleware, mytodoController.mytodoPutPriority);
-router.put("/:todoId/content", authMiddleware, mytodoController.mytodoPutContent);
-router.put("/:todoId/isdone", authMiddleware, mytodoController.mytodoPutIsDone);
-router.delete("/:todoId", authMiddleware, mytodoController.mytodoDelete);
-
-module.exports = {
-  router
-};
