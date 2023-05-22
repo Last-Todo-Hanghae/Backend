@@ -3,15 +3,35 @@ const router = express.Router();
 
 // signup controller
 const signupController = require("../controllers/signup.controller");
+router.post("/", signupController.signUp);
+
+module.exports = {
+  router
+};
 
 /**
  * @swagger
+ * tags:
+ *   - name: SIGNUP
+ *     description: 회원가입 API
  * paths:
  *  /api/signup:
  *    post:
  *      summary: "회원가입"
  *      description: "POST 메소드, 회원가입 요청 API"
  *      tags: [SIGNUP]
+ *      parameters:
+ *       - in: body
+ *         name: signup
+ *         description: 회원가입할 사용자 정보
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             userName:
+ *               type: string
+ *             userPassword:
+ *               type: string
  *      responses:
  *        "201":
  *          description: 회원가입 성공
@@ -44,8 +64,3 @@ const signupController = require("../controllers/signup.controller");
  *                example:
  *                  { message: "회원가입에 실패했습니다." }
  */
-router.post("/", signupController.signUp);
-
-module.exports = {
-  router
-};

@@ -6,15 +6,37 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 // yourtodo controller
 const yourtodoController = require("../controllers/yourtodo.controller");
+router.get("/", authMiddleware, yourtodoController.yourtodoGet);
+router.get("/:userId", authMiddleware, yourtodoController.yourtodoGetDetail);
+router.put("/:userId/like", authMiddleware, yourtodoController.yourtodoPutLike);
+
+module.exports = {
+  router
+};
 
 /**
  * @swagger
+ * tags:
+ *   - name: YOURTODO
+ *     description: yourtodo 전체리스트, 상세리스트 조회, 좋아요 추가/제거 API
  * paths:
  *  /api/yourtodo:
  *    get:
  *      summary: "yourtodo 리스트 조회"
  *      description: "GET 메소드, yourtodo 리스트 조회 API"
  *      tags: [YOURTODO]
+ *      parameters:
+ *       - in: header
+ *         name: yourtodo get list
+ *         description: yourtodo 목록 조회
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
  *      responses:
  *        "200":
  *          description: yourtodo 리스트 조회 성공
@@ -83,6 +105,27 @@ const yourtodoController = require("../controllers/yourtodo.controller");
  *      summary: "yourtodo 상세 조회"
  *      description: "GET 메소드, yourtodo 상세 조회 API"
  *      tags: [YOURTODO]
+ *      parameters:
+ *       - in: header
+ *         name: yourtodo get detail
+ *         description: yourtodo 상세정보 조회
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
+ *       - in: param
+ *         name: yourtodo get detail
+ *         description: yourtodo 상세정보 조회
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             todoId:
+ *               type: integer
  *      responses:
  *        "200":
  *          description: yourtodo 상세 조회 성공
@@ -139,6 +182,27 @@ const yourtodoController = require("../controllers/yourtodo.controller");
  *      summary: "좋아요 추가/삭제"
  *      description: "PUT 메소드, 좋아요 추가/삭제 API"
  *      tags: [YOURTODO]
+ *      parameters:
+ *       - in: header
+ *         name: put like
+ *         description: 좋아요 추가/삭제
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
+ *       - in: param
+ *         name: put like
+ *         description: 좋아요 추가/삭제
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             userId:
+ *               type: integer
  *      responses:
  *        "201":
  *          description: 좋아요 추가/삭제 성공
@@ -165,10 +229,3 @@ const yourtodoController = require("../controllers/yourtodo.controller");
  *                example:
  *                  { "message": "해당 유저를 찾을 수 없습니다." }
  */
-router.get("/", authMiddleware, yourtodoController.yourtodoGet);
-router.get("/:userId", authMiddleware, yourtodoController.yourtodoGetDetail);
-router.put("/:userId/like", authMiddleware, yourtodoController.yourtodoPutLike);
-
-module.exports = {
-  router
-};
