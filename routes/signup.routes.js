@@ -11,6 +11,9 @@ module.exports = {
 
 /**
  * @swagger
+ * tags:
+ *   - name: SIGNUP
+ *     description: 회원가입 API
  * paths:
  *  /api/signup:
  *    post:

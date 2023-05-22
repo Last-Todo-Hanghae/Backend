@@ -16,6 +16,9 @@ module.exports = {
 
 /**
  * @swagger
+ * tags:
+ *   - name: YOURTODO
+ *     description: yourtodo 전체리스트, 상세리스트 조회, 좋아요 추가/제거 API
  * paths:
  *  /api/yourtodo:
  *    get:

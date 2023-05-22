@@ -14,6 +14,9 @@ module.exports = {
 
 /**
  * @swagger
+ * tags:
+ *   - name: LOGOUT
+ *     description: 로그아웃 API
  * paths:
  *  /api/logout:
  *    delete:

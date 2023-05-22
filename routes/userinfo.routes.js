@@ -15,6 +15,9 @@ module.exports = {
 
 /**
  * @swagger
+ * tags:
+ *   - name: USERINFO
+ *     description: 유저 정보 조회, 비밀 번호 변경 API
  * paths:
  *  /api/userinfo:
  *    get:

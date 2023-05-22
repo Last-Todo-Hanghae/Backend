@@ -19,6 +19,9 @@ module.exports = {
 
 /**
  * @swagger
+ * tags:
+ *   - name: MYTODO
+ *     description: mytodo 리스트 조회, 항목 추가, 중요도/내용/완료여부 수정, 항목 삭제 API
  * paths:
  *  /api/mytodo:
  *    get:
