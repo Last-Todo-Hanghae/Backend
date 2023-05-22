@@ -1,134 +1,76 @@
+const CustomError = require("../utils/error.utils");
 const jwt = require("jsonwebtoken");
 const { User, Token } = require("../models");
-const { TokenUtil } = require("../utils/createToken.utils");
+const { TokenUtil, VerifyToken } = require("../utils/token.utils");
 
 // dotenv 파일을 통해 시크릿 정보 가저오기
 require("dotenv").config();
-const env = process.env;
-
-// 시크릿 키 정의
-const secretKey = env.JWT_SECRET;
-
-// Access Token 생성 함수
-function createAccessToken(id, name) {
-  const accessToken = jwt.sign({ userId: id, userName: name }, secretKey, {
-    expiresIn: "1h",
-  });
-  return accessToken;
-}
-
-// Access Token 검증 함수
-function validateAccessToken(accessToken) {
-  try {
-    jwt.verify(accessToken, secretKey);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
-// Refresh Token 검증 함수
-function validateRefreshToken(refreshToken) {
-  try {
-    jwt.verify(refreshToken, secretKey);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
-// Access Token의 Payload를 가져오는 함수
-function getAccessTokenPayload(accessToken) {
-  try {
-    const payload = jwt.verify(accessToken, secretKey); // JWT에서 Payload를 가져옵니다.
-    return payload;
-  } catch (error) {
-    return null;
-  }
-}
+const secretKey = process.env.JWT_SECRET;
 
 // 사용자 인증 미들웨어
 module.exports = async (req, res, next) => {
   try {
-    // console.log(req.rawHeaders)
-    // 쿠키 값이 없을 경우
     if (
-      req.headers === undefined
-      // req.cookies.accessToken === undefined ||
-      // req.cookies.refreshToken === undefined
+      req.headers.accesstoken === undefined ||
+      req.headers.refreshtoken === undefined
     ) {
-      return res.status(401).json({
-        message: "로그인 후 이용 가능한 기능입니다.",
-      });
+      throw new CustomError("로그인 후 이용 가능한 기능입니다.1", 401);
     }
-
-    // 쿠키 일치 여부 확인
-    // console.log(req)
-    // const accessToken = req.cookies.accessToken;
-    // const refreshToken = req.cookies.refreshToken;
     
-    const accessToken = req.headers.accessToken;
-    const refreshToken = req.headers.refreshToken;
+    const accessToken = req.headers.accesstoken;
+    const refreshToken = req.headers.refreshtoken;
     
-    // console.log(accessToken)
-    // console.log(refreshToken)
     const [accessAuthType, accessAuthToken] = (accessToken ?? "").split(" ");
-    if (!accessAuthToken || accessAuthType !== "Bearer") {
-      return res.status(401).send({
-        errorMessage: "로그인 후 이용 가능한 기능입니다.",
-      });
-    }
     const [refreshAuthType, refreshAuthToken] = (refreshToken ?? "").split(" ");
-    if (!refreshAuthToken || refreshAuthType !== "Bearer") {
-      return res.status(401).send({
-        errorMessage: "로그인 후 이용 가능한 기능입니다.",
-      });
+    if (!accessAuthToken || accessAuthType !== "Bearer" || !refreshAuthToken || refreshAuthType !== "Bearer") {
+      throw new CustomError("로그인 후 이용 가능한 기능입니다.2", 401);
     }
 
     // 토큰 유효성 검사
-    const isAccessTokenValidate = validateAccessToken(accessAuthToken);
-    const isRefreshTokenValidate = validateRefreshToken(refreshAuthToken);
+    const verifyToken = new VerifyToken(accessAuthToken,refreshAuthToken)
+    const isAccessTokenValidate = verifyToken.validateAccessToken();
+    const isRefreshTokenValidate = verifyToken.validateRefreshToken();
 
-    if (!isRefreshTokenValidate)
-      return res
-        .status(402)
-        .json({ message: "Refresh Token이 만료되었습니다." });
+    if (!isRefreshTokenValidate) {
+      throw new CustomError("Refresh Token이 만료되었습니다.", 402);
+    };
+
+    // Access 토큰 Decode -> 토큰의 payload에 닮긴 userId 정보 추출
     const decodedToken = jwt.verify(accessAuthToken, secretKey);
-    const id = decodedToken.userId;
+    const user = await User.findOne({ where: { userId: decodedToken.userId } });
 
-    if (!isAccessTokenValidate) {
-      const { accessTokenId } = await Token.findOne({
-        where: { refreshToken: id },
+    // Access 토큰 조회 및 토큰 재발급
+    if (!isAccessTokenValidate && isRefreshTokenValidate) {
+      const { findedRefreshToken } = await Token.findOne({
+        where: { refreshToken },
       });
-      if (!accessTokenId)
-        return res.status(402).json({
-          message: "Refresh Token의 정보가 서버에 존재하지 않습니다.",
-        });
 
-      const user = await User.findOne({ where: { userId: id } });
+      if (!findedRefreshToken) {
+        throw new CustomError("Refresh Token의 정보가 서버에 존재하지 않습니다.", 402);
+      }
 
-      const newAccessToken = createAccessToken(user.userId, user.userName);
+      // 토큰 재발급을 위한 객체 생성
+      const createToken = new TokenUtil(user.userId,user.userName);
+
+      const newAccessToken = createToken.createAccessToken();
       res.cookie("accessToken", `Bearer ${newAccessToken}`, { secure: false });
-      return res.json({ message: "Access Token을 새롭게 발급하였습니다." });
     }
 
-    const { userId } = getAccessTokenPayload(accessAuthToken);
+    const payload = verifyToken.getAccessTokenPayload();
 
     // 닉네임은 있지만 실제 DB에 유저가 없는 경우에 대한 로직 추가
-    const user = await User.findOne({ where: { userId } });
-    if (user === null) {
-      console.log("userId 값을 찾을 수 없습니다.");
-      res.status(401).send({
-        message: "로그인 후 이용 가능한 기능입니다.",
-      });
+    const findedUser = await User.findOne({ where: payload.userId });
+    if (findedUser === null) {
+      throw new CustomError("userId 값을 찾을 수 없습니다.", 401);
     }
-    res.locals.refreshToken = refreshToken;
+
+    res.locals.refreshToken = refreshAuthToken;
     res.locals.user = user;
     next();
   } catch (err) {
     console.error(err.stack);
     res.status(401).send({
-      message: "로그인 후 이용 가능한 기능입니다.",
+      message: "로그인 후 이용 가능한 기능입니다.3",
     });
   }
 };
