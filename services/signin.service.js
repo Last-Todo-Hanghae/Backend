@@ -1,5 +1,5 @@
 const CustomError = require("../utils/error.utils");
-const { TokenUtil } = require("../utils/createToken.utils");
+const { TokenUtil } = require("../utils/token.utils");
 const signinRepository = require("../repositories/signin.repository");
 
 // 로그인

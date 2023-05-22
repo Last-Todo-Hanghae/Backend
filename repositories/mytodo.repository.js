@@ -14,6 +14,8 @@ const mytodoPost = async ( userId, todoContent, todoPriority ) => {
 
 // mytodo 전체 조회
 const mytodoGet = async (userId) => {
+  console.log(typeof userId)
+  console.log(userId)
   const todoAll = await User.findAll({
     attributes: ["userName"],
     where: { userId },
@@ -25,7 +27,7 @@ const mytodoGet = async (userId) => {
       },
       {
         model: Todo,
-        required: true,
+        required: false,
         attributes: [
           "todoId",
           "todoContent",
@@ -41,6 +43,7 @@ const mytodoGet = async (userId) => {
     ],
     // raw: true, // JSON 형태로 반환
   })
+  console.log(todoAll)
   return todoAll;
 };
 
