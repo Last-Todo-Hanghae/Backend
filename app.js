@@ -5,7 +5,7 @@ const routes = require("./routes"); // routes/index.js 파일에서 라우터 �
 const logMiddleware = require("./middlewares/logMiddleware"); // log Middleware 모듈 가져오기
 const cors = require('cors') // cors 미들웨어 추가
 const app = express();
-
+const { swaggerUi, specs } = require("./swagger/swagger") // 
 const port = process.env.SERVICE_PORT || 3000; // 서비스 포트 정의
 
 app.use(cors()) // cors 미들웨어 추가
@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/api", routes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs)) // swagger
 
 app.get("/", async (req, res) => {
   res.status(200).send("기본 페이지 입니다.");

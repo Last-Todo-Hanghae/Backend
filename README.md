@@ -89,3 +89,9 @@ pm2 start app.js
 <!-- 종료 -->
 pm2 delete 0 
 ```
+
+# SWAGGER 추가
+```
+npm install -D swagger-jsdoc swagger-ui-express
+```
+https://any-ting.tistory.com/105
