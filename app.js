@@ -8,7 +8,9 @@ const app = express();
 const { swaggerUi, specs } = require("./swagger/swagger") // 
 const port = process.env.SERVICE_PORT || 3000; // 서비스 포트 정의
 
-app.use(cors()) // cors 미들웨어 추가
+app.use(cors({
+  origin: process.env.FRONTEND_DOMAIN || true // 특정 도메인만 허용하기 위해서는 true 값에 도메인 정보 입력 필요 ex> "http://아이피정보"
+})) // cors 미들웨어 추가
 app.use(logMiddleware); // 로그 미들웨어를 애플리케이션에 적용
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
