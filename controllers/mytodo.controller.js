@@ -7,10 +7,6 @@ const mytodoPost = async (req, res) => {
     const { userId } = res.locals.user;
     const { userName } = res.locals.user;
     const { todoContent, todoPriority } = req.body;
-    console.log(userId);
-    console.log(userName);
-    console.log(todoContent);
-    console.log(todoPriority);
 
     // 입력값 유효성 검사
     if (
