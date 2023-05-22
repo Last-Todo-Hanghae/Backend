@@ -12,6 +12,11 @@ const pwChange = async (userName, userPassword, newPassword) => {
 
   // 패스워드 변경
   await userinfoRepository.pwChange(userName, userPassword, newPassword);
+  /* REVIEW: 
+    주고싶은 데이터가 없다면 안주셔도 됩니다!
+    현재는 return 값이 Promise<{}>지만
+    Promise<void>로 바꾸어도 될 것 같네요:)
+   */
   return {};
 };
 

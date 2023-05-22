@@ -98,9 +98,11 @@ const checkIsLike = async (source, target) => {
 
   return islike;
 };
-
+  /* REVIEW: 
+    3개 이상의 인자를 받는 함수인 경우 실수를 줄이기 위해 객체로 주고받고는 합니다!
+   */
 // yourtodo 좋아요 상태 수정 API
-const yourtodoPutLike = async (isLike, source, target) => {
+const yourtodoPutLike = async ({isLike, source, target}) => {
   await Like.update(
     { isLike },
     {
