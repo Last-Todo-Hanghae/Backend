@@ -1,3 +1,6 @@
+// @ts-check
+/* 파일 상단에 @ts-check 주석을 추가하면 간단한 문법 오류를 잡아줍니다! */
+
 const CustomError = require("../utils/error.utils");
 const yourtodoService = require("../services/yourtodo.service");
 
@@ -37,12 +40,16 @@ const yourtodoGetDetail = async (req, res) => {
     const target = req.params.userId;
 
     // 입력값 유효성 검사
+    /* REVIEW: 분기처리는 긍정문으로 작성해 주시는 것이 읽기 더 편합니다! 
+       if (source && target) {
+    */
     if (!source || !target) {
       throw new CustomError("입력값이 올바르지 않습니다.", 402);
     }
 
     const { userName, userImage, isLike, mytodo } = await yourtodoService.yourtodoGetDetail(
       source,
+      /* REVIEW: Number() 보다는 parseInt를 지향해주세요!*/
       Number(target)
     );
 

@@ -3,6 +3,7 @@ const yourtodoRepository = require("../repositories/yourtodo.repository");
 
 // yourtodo 전체 리스트 조회
 const yourtodoGet = async (source) => {
+  /* REVIEW: somethingGet도 함수의 역할을 잘 나타내지만 getSomething의 작명이 보편적입니다! */
   const yourtodo = await yourtodoRepository.yourtodoGet(source);
   return yourtodo;
 };
@@ -18,10 +19,24 @@ const yourtodoGetDetail = async (source, userId) => {
   }
 
   // yourtodo 테이블 조회
+  /* REVIEW: promise를 반환하는 함수들이 서로 영향을 끼치지 않는다면 Promise.All을 통해 시간을 단축할 수 있습니다!
+  
+    const [yourTodo, isLike] = await Promise.all([
+    yourtodoRepository.yourtodoGetDetail(userId),
+    yourtodoRepository.yourtodoGetLike(source, userId)
+  ])
+
+  */
   const yourTodo = await yourtodoRepository.yourtodoGetDetail(userId);
   const isLike = await yourtodoRepository.yourtodoGetLike(source, userId);
 
-  return { 
+
+  /* REVIEW: 
+    > const a = []
+    > a.datevalues.isLike
+     TypeError: Cannot read properties of undefined (reading 'isLike')
+  */
+  return {
     userName: yourTodo[0].dataValues.userName,
     userImage: yourTodo[0].dataValues.UserInfo.dataValues.userImage ? yourTodo[0].dataValues.UserInfo.dataValues.userImage : null,
     isLike: isLike[0] !== undefined ? isLike[0].dataValues.isLike : false,
@@ -43,7 +58,11 @@ const yourtodoPutLike = async (source, target) => {
   const like = await yourtodoRepository.checkIsLike(source, target);
 
   // isLike 상태 변경
-  await yourtodoRepository.yourtodoPutLike(!like[0].dataValues.isLike, source, target);
+  await yourtodoRepository.yourtodoPutLike({
+    isLike: !like[0].dataValues.isLike,
+    source: source,
+    target: target
+  });
   return true;
 };
 
