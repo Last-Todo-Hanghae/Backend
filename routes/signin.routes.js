@@ -17,6 +17,18 @@ module.exports = {
  *      summary: "로그인"
  *      description: "POST 메소드, 로그인 요청 API"
  *      tags: [LOGIN]
+ *      parameters:
+ *       - in: body
+ *         name: login
+ *         description: 로그인 사용자 정보
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             userName:
+ *               type: string
+ *             userPassword:
+ *               type: string
  *      responses:
  *        "200":
  *          description: 로그인 성공

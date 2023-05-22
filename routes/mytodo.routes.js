@@ -25,6 +25,18 @@ module.exports = {
  *      summary: "mytodo 리스트 조회"
  *      description: "GET 메소드, mytodo 리스트 조회 API"
  *      tags: [MYTODO]
+ *      parameters:
+ *       - in: header
+ *         name: mytodo get list
+ *         description: mytodo 리스트 조회
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
  *      responses:
  *        "200":
  *          description: mytodo 리스트 조회 성공
@@ -75,6 +87,29 @@ module.exports = {
  *      summary: "mytodo 항목 추가"
  *      description: "POST 메소드, mytodo 항목 추가 API"
  *      tags: [MYTODO]
+ *      parameters:
+ *       - in: header
+ *         name: mytodo post todo
+ *         description: mytodo 항목 추가
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
+ *       - in: body
+ *         name: mytodo post todo
+ *         description: mytodo 항목 추가
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             todoContent:
+ *               type: string
+ *             todoPriority:
+ *               type: string
  *      responses:
  *        "201":
  *          description: mytodo 항목 추가 성공
@@ -111,6 +146,36 @@ module.exports = {
  *      summary: "mytodo 중요도 수정"
  *      description: "PUT 메소드, mytodo 중요도 수정 API"
  *      tags: [MYTODO]
+ *      parameters:
+ *       - in: header
+ *         name: mytodo change priority
+ *         description: mytodo 중요도 수정
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
+ *       - in: param
+ *         name: mytodo change priority
+ *         description: mytodo 중요도 수정
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             todoId:
+ *               type: integer
+ *       - in: body
+ *         name: mytodo change priority
+ *         description: mytodo 중요도 수정
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             todoPriority:
+ *               type: string
  *      responses:
  *        "201":
  *          description: mytodo 중요도 수정 성공
@@ -149,6 +214,36 @@ module.exports = {
  *      summary: "mytodo 내용 수정"
  *      description: "PUT 메소드, mytodo 내용 수정 API"
  *      tags: [MYTODO]
+ *      parameters:
+ *       - in: header
+ *         name: mytodo change content
+ *         description: mytodo 내용 수정
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
+ *       - in: param
+ *         name: mytodo change content
+ *         description: mytodo 내용 수정
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             todoId:
+ *               type: integer
+ *       - in: body
+ *         name: mytodo change content
+ *         description: mytodo 내용 수정
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             todoContent:
+ *               type: string
  *      responses:
  *        "201":
  *          description: mytodo 내용 수정 성공
@@ -187,6 +282,27 @@ module.exports = {
  *      summary: "mytodo 완료여부 수정"
  *      description: "PUT 메소드, mytodo 완료여부 수정 API"
  *      tags: [MYTODO]
+ *      parameters:
+ *       - in: header
+ *         name: mytodo change isdone
+ *         description: mytodo 완료여부 수정
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
+ *       - in: param
+ *         name: mytodo change isdone
+ *         description: mytodo 완료여부 수정
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             todoId:
+ *               type: integer
  *      responses:
  *        "201":
  *          description: mytodo 완료여부 수정 성공
@@ -225,6 +341,27 @@ module.exports = {
  *      summary: "mytodo 항목 삭제"
  *      description: "DELETE 메소드, mytodo 항목 삭제 API"
  *      tags: [MYTODO]
+ *      parameters:
+ *       - in: header
+ *         name: mytodo delete
+ *         description: mytodo 항목 삭제
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
+ *       - in: param
+ *         name: mytodo delete
+ *         description: mytodo 항목 삭제
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             todoId:
+ *               type: integer
  *      responses:
  *        "201":
  *          description: mytodo 항목 삭제 성공

@@ -20,6 +20,18 @@ module.exports = {
  *      summary: "로그아웃"
  *      description: "DELETE 메소드, 로그아웃 API"
  *      tags: [LOGOUT]
+ *      parameters:
+ *       - in: header
+ *         name: logout
+ *         description: 로그아웃
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
  *      responses:
  *        "201":
  *          description: 로그아웃 성공

@@ -22,6 +22,18 @@ module.exports = {
  *      summary: "yourtodo 리스트 조회"
  *      description: "GET 메소드, yourtodo 리스트 조회 API"
  *      tags: [YOURTODO]
+ *      parameters:
+ *       - in: header
+ *         name: yourtodo get list
+ *         description: yourtodo 목록 조회
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
  *      responses:
  *        "200":
  *          description: yourtodo 리스트 조회 성공
@@ -90,6 +102,27 @@ module.exports = {
  *      summary: "yourtodo 상세 조회"
  *      description: "GET 메소드, yourtodo 상세 조회 API"
  *      tags: [YOURTODO]
+ *      parameters:
+ *       - in: header
+ *         name: yourtodo get detail
+ *         description: yourtodo 상세정보 조회
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
+ *       - in: param
+ *         name: yourtodo get detail
+ *         description: yourtodo 상세정보 조회
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             todoId:
+ *               type: integer
  *      responses:
  *        "200":
  *          description: yourtodo 상세 조회 성공
@@ -146,6 +179,27 @@ module.exports = {
  *      summary: "좋아요 추가/삭제"
  *      description: "PUT 메소드, 좋아요 추가/삭제 API"
  *      tags: [YOURTODO]
+ *      parameters:
+ *       - in: header
+ *         name: put like
+ *         description: 좋아요 추가/삭제
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
+ *       - in: param
+ *         name: put like
+ *         description: 좋아요 추가/삭제
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             userId:
+ *               type: integer
  *      responses:
  *        "201":
  *          description: 좋아요 추가/삭제 성공

@@ -17,6 +17,18 @@ module.exports = {
  *      summary: "회원가입"
  *      description: "POST 메소드, 회원가입 요청 API"
  *      tags: [SIGNUP]
+ *      parameters:
+ *       - in: body
+ *         name: signup
+ *         description: 회원가입할 사용자 정보
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             userName:
+ *               type: string
+ *             userPassword:
+ *               type: string
  *      responses:
  *        "201":
  *          description: 회원가입 성공

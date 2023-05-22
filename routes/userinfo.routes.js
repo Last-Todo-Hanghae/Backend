@@ -21,6 +21,18 @@ module.exports = {
  *      summary: "유저 정보 조회 (userName)"
  *      description: "GET 메소드, 유저 정보 조회(userName) API"
  *      tags: [USERINFO]
+ *      parameters:
+ *       - in: header
+ *         name: userinfo
+ *         description: 로그인된 사용자 아이디 조회
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
  *      responses:
  *        "200":
  *          description: 유저 정보 조회 성공
@@ -62,6 +74,31 @@ module.exports = {
  *      summary: "비밀 번호 변경"
  *      description: "PUT 메소드, 비밀 번호 변경 API"
  *      tags: [USERINFO]
+ *      parameters:
+ *       - in: header
+ *         name: userinfo
+ *         description: 비밀번호 변경
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             accessToken:
+ *               type: string
+ *             refreshToken:
+ *               type: string
+ *       - in: body
+ *         name: userinfo
+ *         description: 비밀번호 변경
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             userName:
+ *               type: string
+ *             userPassword:
+ *               type: string
+ *             newPassword:
+ *               type: string
  *      responses:
  *        "201":
  *          description: 유저 정보 조회 성공
