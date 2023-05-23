@@ -5,8 +5,10 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/authMiddleware");
 
 // userInfo controller
-const signoutController = require("../controllers/signout.controller");
-router.delete("/", authMiddleware, signoutController.signOut);
+const SignOutController = require("../controllers/signout.controller");
+const signOutController = new SignOutController();
+
+router.delete("/", authMiddleware, signOutController.signOut);
 
 module.exports = {
   router

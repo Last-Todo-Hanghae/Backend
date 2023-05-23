@@ -5,7 +5,9 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/authMiddleware");
 
 // userInfo controller
-const userInfoController = require("../controllers/userinfo.controller");
+const UserInfoController = require("../controllers/userinfo.controller");
+const userInfoController = new UserInfoController();
+
 router.get("/", authMiddleware, userInfoController.getUserInfo);
 router.put("/", authMiddleware, userInfoController.pwChange);
 
