@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../utils/image.utils");
 
 // auth Middleware
 const authMiddleware = require("../middlewares/authMiddleware");
@@ -10,6 +11,7 @@ const userInfoController = new UserInfoController();
 
 router.get("/", authMiddleware, userInfoController.getUserInfo);
 router.put("/", authMiddleware, userInfoController.pwChange);
+router.post("/", authMiddleware, upload.single('image'), userInfoController.uploadImage);
 
 module.exports = {
   router

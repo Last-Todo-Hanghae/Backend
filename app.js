@@ -4,9 +4,9 @@ const express = require("express"); // express 모듈 사용
 const routes = require("./routes"); // routes/index.js 파일에서 라우터 정보 가져오기
 const logMiddleware = require("./middlewares/logMiddleware"); // log Middleware 모듈 가져오기
 const cors = require('cors') // cors 미들웨어 추가
-const app = express();
-const { swaggerUi, specs } = require("./swagger/swagger") // 
+const { swaggerUi, specs } = require("./swagger/swagger") // swagger 모듈 가져오기
 const port = process.env.SERVICE_PORT || 3000; // 서비스 포트 정의
+const app = express();
 
 app.use(cors({
   origin: process.env.FRONTEND_DOMAIN || true // 특정 도메인만 허용하기 위해서는 true 값에 도메인 정보 입력 필요 ex> "http://아이피정보"

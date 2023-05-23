@@ -1,8 +1,16 @@
 const CustomError = require("../utils/error.utils");
 const UserRepository = require("../repositories/user.repository");
+const UserInfoRepository = require("../repositories/userinfo.repository");
 
 class UserInfoService {
   userRepository = new UserRepository();
+  userInfoRepository = new UserInfoRepository();
+
+  // S3에 이미지 업로드 및 이미지 URL DB에 저장
+  uploadImage = async (imageURL, userId) => {
+    await this.userInfoRepository.uploadImage(imageURL, userId);
+    return true;
+  };
 
   // 비밀번호 변경 API
   pwChange = async (userName, userPassword, newPassword) => {
@@ -15,7 +23,7 @@ class UserInfoService {
 
     // 패스워드 변경
     await this.userRepository.putUser(userName, userPassword, newPassword);
-    return {};
+    return true;
   };
 
   // 유저 정보 조회(userName)
