@@ -1,13 +1,17 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../utils/image.utils");
 
 // auth Middleware
 const authMiddleware = require("../middlewares/authMiddleware");
 
 // userInfo controller
-const userInfoController = require("../controllers/userinfo.controller");
+const UserInfoController = require("../controllers/userinfo.controller");
+const userInfoController = new UserInfoController();
+
 router.get("/", authMiddleware, userInfoController.getUserInfo);
 router.put("/", authMiddleware, userInfoController.pwChange);
+router.post("/", authMiddleware, upload.single('image'), userInfoController.uploadImage);
 
 module.exports = {
   router

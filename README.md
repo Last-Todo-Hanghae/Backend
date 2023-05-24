@@ -89,9 +89,20 @@ pm2 start app.js
 <!-- 종료 -->
 pm2 delete 0 
 ```
-
 # SWAGGER 추가
 ```
 npm install -D swagger-jsdoc swagger-ui-express
 ```
 https://any-ting.tistory.com/105
+
+# AWS 모듈 설치 - S3 객체 파일 업로드 용
+npm install @aws-sdk/client-s3 multer multer-s3
+
+환경 변수 설정 필요
+윈도우
+setx AWS_ACCESS_KEY_ID ""
+setx AWS_SECRET_ACCESS_KEY ""
+
+리눅스
+export AWS_ACCESS_KEY_ID=""
+export AWS_SECRET_ACCESS_KEY=""

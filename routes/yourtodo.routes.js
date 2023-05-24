@@ -5,7 +5,9 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/authMiddleware");
 
 // yourtodo controller
-const yourtodoController = require("../controllers/yourtodo.controller");
+const YourtodoController = require("../controllers/yourtodo.controller");
+const yourtodoController = new YourtodoController();
+
 router.get("/", authMiddleware, yourtodoController.yourtodoGet);
 router.get("/:userId", authMiddleware, yourtodoController.yourtodoGetDetail);
 router.put("/:userId/like", authMiddleware, yourtodoController.yourtodoPutLike);

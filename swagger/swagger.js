@@ -12,7 +12,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://43.201.8.30", // 요청 URL
+        url: "http://api.lasttodo.site", // 요청 URL
       },
     ],
   },
