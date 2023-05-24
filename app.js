@@ -8,9 +8,7 @@ const { swaggerUi, specs } = require("./swagger/swagger") // swagger 모듈 가�
 const port = process.env.SERVICE_PORT || 3000; // 서비스 포트 정의
 const app = express();
 
-app.use(cors({
-  origin: process.env.FRONTEND_DOMAIN || true // 특정 도메인만 허용하기 위해서는 true 값에 도메인 정보 입력 필요 ex> "http://아이피정보"
-})) // cors 미들웨어 추가
+app.use(cors({ origin: process.env.FRONTEND_DOMAIN || true })) // cors 미들웨어 추가, 특정 도메인만 허용하기 위해서는 true 값에 도메인 정보 입력 필요 ex> "http://아이피정보"
 app.use(logMiddleware); // 로그 미들웨어를 애플리케이션에 적용
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -19,7 +17,7 @@ app.use("/api", routes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs)) // swagger
 
 app.get("/", async (req, res) => {
-  res.status(200).send("기본 페이지 입니다.");
+  res.status(200).send("api서버 기본 페이지 입니다.");
 });
 
 // 에러 처리 미들웨어
@@ -36,7 +34,7 @@ const start = async () => {
       console.log("Server is running. PORT :", port);
     });
   } catch (error) {
-    console.error(err);
+    console.error(error);
   }
 }
 

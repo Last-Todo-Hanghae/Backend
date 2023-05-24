@@ -60,7 +60,10 @@ class JoinRepository {
           limit: 3,
         },
       ],
-      order: [[Like, "updatedAt", "DESC"]],
+      order: [
+        [Like, "isLike", "DESC"],
+        [Like, "updatedAt", "DESC"],
+      ],
     });
     return todo;
   };

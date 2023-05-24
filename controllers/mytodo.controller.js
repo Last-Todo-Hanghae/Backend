@@ -90,7 +90,7 @@ class MytodoController {
         throw new CustomError("입력값이 올바르지 않습니다.", 402);
       }
 
-      await this.mytodoService.mytodoPutPriority(userId, todoId, todoPriority);
+      await this.mytodoService.mytodoPutPriority(userId, todoId, todoPriority); 
 
       return res.status(201).json({});
     } catch (err) {

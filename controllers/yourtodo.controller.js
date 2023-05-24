@@ -46,7 +46,7 @@ class YourtodoController {
 
       const { userName, userImage, isLike, mytodo } = await this.yourtodoService.yourtodoGetDetail(
         source,
-        Number(target)
+        parseInt(target)
       );
 
       return res.status(200).json({ userName, userImage, isLike, mytodo });
@@ -71,7 +71,7 @@ class YourtodoController {
       const source = userId;
       const target = req.params.userId;
 
-      await this.yourtodoService.yourtodoPutLike(source, Number(target));
+      await this.yourtodoService.yourtodoPutLike(source, parseInt(target));
 
       return res.status(201).json({});
     } catch (err) {
